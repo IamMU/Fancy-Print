@@ -133,7 +133,7 @@ class Printer:
         print(f"     - FRONT: {self.__separator_front_color}{self.__separator_front}")
 
            
-    def log(self, message: str, level=LogLevel.INFO, higherarchy_level=0, color=Fore.WHITE, level_padding=8) -> None:
+    def log(self, message: str, level=LogLevel.INFO, higherarchy_level=0, color=Fore.WHITE, level_padding=8, level_padding_char=' ') -> None:
         # log level color and string
         lvl = 'INFO'
         if level == LogLevel.WARN:
@@ -148,7 +148,7 @@ class Printer:
         # INFO level is default (Fore.WHITE) or whatever you change it to
 
         # level string formating
-        level_str = '#' * (level_padding - len(lvl))
+        level_str = level_padding_char * (level_padding - len(lvl))
         level_str += f"[ {lvl} ]"
 
         # Indentation
@@ -412,7 +412,7 @@ if __name__ == "__main__":
     printer.log("error", level=LogLevel.ERROR)
     printer.log("success", level=LogLevel.SUCCESS)
 
-    printer.log("test", level_padding=20)
-    printer.log("test", level_padding=20, level=LogLevel.WARN)
-    printer.log("test", level_padding=20, level=LogLevel.ERROR)
-    printer.log("test", level_padding=20, level=LogLevel.SUCCESS)
+    printer.log("test", level_padding_char='#', level_padding=20)
+    printer.log("test", level_padding_char='-', level_padding=20, level=LogLevel.WARN)
+    printer.log("test", level_padding_char='.', level_padding=20, level=LogLevel.ERROR)
+    printer.log("test", level_padding_char='>', level_padding=20, level=LogLevel.SUCCESS)
