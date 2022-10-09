@@ -7,15 +7,22 @@ import sys
 from colorama import Fore
 from colorama import init as colorama_init
 
+from enum import Enum
+
 ##########################
 # INITIALIZING LIBRARIES #
 ##########################
 colorama_init(autoreset=True)
 
-
 ###########
 # CLASSES #
 ###########
+class LogLevel(Enum):
+    INFO = 0
+    WARN = 1
+    ERROR = 2
+    SUCCESS = 3
+
 class Printer:
     def __init__(self):
         # Utility variables
@@ -51,7 +58,7 @@ class Printer:
         self.__separator_front = "-"
         self.__separator_front_color = Fore.MAGENTA
 
-    def __convert_color_input(self, string: str) -> str | None:
+    def __convert_color_input(self, string: str) -> str:
         # Make string lower case
         string = string.lower()
 
@@ -124,6 +131,38 @@ class Printer:
         print(f" - SEPARATORS:")
         print(f"     - BACK: {self.__separator_back_color}{self.__separator_back}")
         print(f"     - FRONT: {self.__separator_front_color}{self.__separator_front}")
+
+           
+    def log(self, message: str, level=LogLevel.INFO, higherarchy_level=0, color=Fore.WHITE, level_padding=8) -> None:
+        # log level color and string
+        lvl = 'INFO'
+        if level == LogLevel.WARN:
+            color = Fore.YELLOW
+            lvl = 'WARN'
+        elif level == LogLevel.ERROR:
+            color = Fore.RED
+            lvl = 'ERROR'
+        elif level == LogLevel.SUCCESS:
+            color = Fore.GREEN
+            lvl = 'SUCCESS'
+        # INFO level is default (Fore.WHITE) or whatever you change it to
+
+        # level string formating
+        level_str = '#' * (level_padding - len(lvl))
+        level_str += f"[ {lvl} ]"
+
+        # Indentation
+        indent = "****" * higherarchy_level
+
+        # Message seperation
+        messages = message.split('\n')
+
+        for i, msg in enumerate(messages):
+            if i == 0:
+                self.print(f"{indent}{color}{level_str} {msg}", align="left", back_separator=False, front_separator=False)
+                continue
+
+            self.print(f"{indent}{'*' * len(level_str)}{color} {msg}", align="left", back_separator=False, front_separator=False)
 
     def print(self, text: str, align="center", blank_character=" ", left_delimiter=True, right_delimiter=True, back_separator=True,
               front_separator=True):
@@ -361,3 +400,19 @@ if __name__ == "__main__":
     printer.print(text="This is some text in the center", align="center")
     printer.print(text="This is some text on the left side", align="left", back_separator=False)
     printer.print(text="This is some text on the right side", align="right", back_separator=False)
+
+    printer.log("hello 1")
+    printer.log("hello 1", higherarchy_level=1)
+    printer.log("hello 1", higherarchy_level=2)
+    printer.log("hello", color=Fore.RED)
+    printer.log("hello 1\nhello 1", color=Fore.RED)
+    printer.log("hello 1\nhello1", higherarchy_level=1)
+
+    printer.log("warn", level=LogLevel.WARN)
+    printer.log("error", level=LogLevel.ERROR)
+    printer.log("success", level=LogLevel.SUCCESS)
+
+    printer.log("test", level_padding=20)
+    printer.log("test", level_padding=20, level=LogLevel.WARN)
+    printer.log("test", level_padding=20, level=LogLevel.ERROR)
+    printer.log("test", level_padding=20, level=LogLevel.SUCCESS)
