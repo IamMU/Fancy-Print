@@ -3,8 +3,10 @@
 #######################
 import os
 import sys
+from typing import Tuple
 
-from colorama import Fore, init as colorama_init
+from colorama import Fore
+from colorama import init as colorama_init
 
 ##########################
 # INITIALIZING LIBRARIES #
