@@ -1,2 +1,4 @@
 <h1 align="center">Fancy Print</h1>
-Fancy Print is a library that makes it easy to print beautiful text in python, without much of code.
+<h3 align="center">An aesthetic replacement to print()<h3>
+
+###### **Development Status:** Planning/Early-Stages
