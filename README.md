@@ -1,8 +1,7 @@
 <h1 align="center">Fancy Print</h1>
 <h3 align="center">An aesthetic replacement to print()</h3>
 
-
-###### **Development Status:** Planning/Early-Stages
+<h6 align="center"><b>Development Status:</b> Planning/Early-Stages</h6>
 
 <p align="center">
   <a href="https://pypi.org/project/fancyprint/">
