@@ -1,0 +1,22 @@
+[build-system]
+requires = ["flit_core>=3.7.1", "colorama"]
+build-backend = "flit_core.buildapi"
+
+[project]
+name = "fancyprint"
+version = "0.1.1"
+authors = [
+  { name="MU", email="iammu@duck.com" },
+]
+description = "A aesthetic replacement to print()"
+readme = "README.md"
+requires-python = ">=3.7"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/IamMU/Fancy-Print"
+"Bug Tracker" = "https://github.com/IamMU/Fancy-Print/issues"
