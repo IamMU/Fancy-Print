@@ -2,171 +2,65 @@
 # IMPORTING LIBRARIES #
 #######################
 import os
-import sys
-
-from colorama import Fore
-from colorama import init as colorama_init
-
-from enum import Enum
-
-##########################
-# INITIALIZING LIBRARIES #
-##########################
-colorama_init(autoreset=True)
+from typing import Tuple
+from colorama import init as colorama_init, Fore
+from helpers import LogLevel, PrinterConfig, LogConfig, LogColor, PrintConfig, Align
 
 ###########
 # CLASSES #
 ###########
-class LogLevel(Enum):
-    INFO = 0
-    WARN = 1
-    ERROR = 2
-    SUCCESS = 3
+
+
 
 class Printer:
     def __init__(self):
-        # Utility variables
-        self.__possible_color_inputs = {
-            Fore.CYAN: ["cyan", "c"],
-            Fore.WHITE: ["white", "w"],
-            Fore.MAGENTA: ["magenta", "m"],
-            Fore.YELLOW: ["yellow", "y"],
-            Fore.BLUE: ["blue", "b"],
-            Fore.RED: ["red", "r"],
-            Fore.GREEN: ["green", "g"],
-            Fore.BLACK: ["black", "bl"],
-            Fore.LIGHTCYAN_EX: ["light cyan", "lc"],
-            Fore.LIGHTWHITE_EX: ["light white", "lw"],
-            Fore.LIGHTMAGENTA_EX: ["light magenta", "lm"],
-            Fore.LIGHTYELLOW_EX: ["light yellow", "ly"],
-            Fore.LIGHTBLUE_EX: ["light blue", "lb"],
-            Fore.LIGHTRED_EX: ["light red", "lr"],
-            Fore.LIGHTGREEN_EX: ["light green", "lg"],
-            Fore.LIGHTBLACK_EX: ["light black", "lbl"],
-        }
-
-        # Variables
-        self.__delimiter_left = "|"
-        self.__delimiter_left_color = Fore.CYAN
-        self.__delimiter_right = "|"
-        self.__delimiter_right_color = Fore.CYAN
-
-        self.__delimiter_space = 2
-
-        self.__separator_back = "-"
-        self.__separator_back_color = Fore.MAGENTA
-        self.__separator_front = "-"
-        self.__separator_front_color = Fore.MAGENTA
-
-    def __convert_color_input(self, string: str) -> str:
-        # Make string lower case
-        string = string.lower()
-
-        # Return respective color codes
-        for key in self.__possible_color_inputs.keys():
-            possible_codes = self.__possible_color_inputs[key]
-
-            if string in possible_codes:
-                return key
-
-        # Return None if not valid
-        return None
-
-    def configure_options(self, delimiter_left: str, delimiter_right: str, delimiter_left_color: str,
-                          delimiter_right_color: str, separator_back: str, separator_front: str,
-                          separator_back_color: str, separator_front_color: str, delimiter_space: int) -> None:
-        """Configure the options for the printer, such as color and symbols
-        -------------------------------------------------------------------------------
-        :param delimiter_left: Symbol for the left delimiter (default: "|")
-        :type delimiter_left: str
-
-        :param delimiter_right: Symbol for the right delimiter (default: "|")
-        :type delimiter_right: str
-        -------------------------------------------------------------------------------
-        :param delimiter_left_color: Color for the left delimiter (default: Cyan)
-        :type delimiter_left_color: str
-
-        :param delimiter_right_color: Color for the right delimiter (default: Cyan)
-        :type delimiter_right_color: str
-        -------------------------------------------------------------------------------
-        :param separator_back: Symbol for the back separator (default: "-")
-        :type separator_back: str
-
-        :param separator_front: Symbol for the front separator (default: "-")
-        :type separator_front: str
-        -------------------------------------------------------------------------------
-        :param separator_back_color: Color for the back separator (default: Magenta)
-        :type separator_back_color: str
-
-        :param separator_front_color: Color for the front separator (default: Magenta)
-        :type separator_front_color: str
-        -------------------------------------------------------------------------------
-        :param delimiter_space: Space between delimiters and text (default: 2)
-        :type delimiter_space: int
         """
+        Initialize the printer
+        """
+        colorama_init(autoreset=True)
 
-        # Assign all the symbols
-        self.__delimiter_left = delimiter_left
-        self.__delimiter_right = delimiter_right
+        # Configurations
+        self.global_config = PrinterConfig()
 
-        self.__separator_front = separator_front
-        self.__separator_back = separator_back
+    def configure_options(self, config: PrinterConfig) -> None:
+        """Configure the printer options
+        :param config: The configuration object
+        :type config: Config
+        """
+        self.global_config = config
 
-        # Assign colors to the symbols
-        self.__delimiter_left_color = self.__convert_color_input(delimiter_left_color) if self.__convert_color_input(delimiter_left_color) is not None else self.__delimiter_left_color
-        self.__delimiter_right_color = self.__convert_color_input(delimiter_right_color) if self.__convert_color_input(delimiter_right_color) is not None else self.__delimiter_right_color
-
-        self.__separator_back_color = self.__convert_color_input(separator_back_color) if self.__convert_color_input(separator_back_color) is not None else self.__separator_back_color
-        self.__separator_front_color = self.__convert_color_input(separator_front_color) if self.__convert_color_input(separator_front_color) is not None else self.__separator_front_color
-
-        # Assign other symbols
-        self.__delimiter_space = delimiter_space
 
     def test_configurations(self):
         print(f"CONFIGURATIONS:")
         print(f" - DELIMITERS:")
-        print(f"     - LEFT: {self.__delimiter_left_color}{self.__delimiter_left}")
-        print(f"     - RIGHT: {self.__delimiter_right_color}{self.__delimiter_right}")
-        print(f"     - SPACE: {self.__delimiter_space}")
+        print(f"     - LEFT:  {self.global_config.delimiter_left_color}{self.global_config.delimiter_left}")
+        print(f"     - RIGHT: {self.global_config.delimiter_right_color}{self.global_config.delimiter_right}")
+        print(f"     - SPACE: {self.global_config.delimiter_space}")
         print(f" - SEPARATORS:")
-        print(f"     - BACK: {self.__separator_back_color}{self.__separator_back}")
-        print(f"     - FRONT: {self.__separator_front_color}{self.__separator_front}")
+        print(f"     - BACK:  {self.global_config.separator_back_color}{self.global_config.separator_back}")
+        print(f"     - FRONT: {self.global_config.separator_front_color}{self.global_config.separator_front}")
 
-           
-    def log(self, message: str, level=LogLevel.INFO, higherarchy_level=0, color=Fore.WHITE, level_padding=8, level_padding_char=' ') -> None:
+
+    def log(self, message: str, log_config = LogConfig()) -> None:
         # log level color and string
-        lvl = 'INFO'
-        if level == LogLevel.WARN:
-            color = Fore.YELLOW
-            lvl = 'WARN'
-        elif level == LogLevel.ERROR:
-            color = Fore.RED
-            lvl = 'ERROR'
-        elif level == LogLevel.SUCCESS:
-            color = Fore.GREEN
-            lvl = 'SUCCESS'
-        # INFO level is default (Fore.WHITE) or whatever you change it to
+        level = str(log_config.level.value).upper()
+        color = LogColor[log_config.level.name].value
 
-        # level string formating
-        level_str = level_padding_char * (level_padding - len(lvl))
-        level_str += f"[ {lvl} ]"
+        # level string formatting
+        level_str = log_config.level_padding_char * (log_config.level_padding - len(level)) + f"[ {level} ]"
 
         # Indentation
-        indent = "****" * higherarchy_level
+        indent = "****" * log_config.hierarchy_level
 
-        # Message seperation
+        # Message separation
         messages = message.split('\n')
 
         for i, msg in enumerate(messages):
-            if i == 0:
-                self.print(f"{indent}{color}{level_str} {msg}", align="left", back_separator=False, front_separator=False)
-                continue
+            text = f"{indent}{color}{level_str} {msg}" if i == 0 else f"{indent}{'*' * (len(level_str) )}{color} {msg}"
+            self.print(f"{text}", PrintConfig(align=Align.LEFT, back_separator=False, front_separator=False))
 
-            self.print(f"{indent}{'*' * len(level_str)}{color} {msg}", align="left", back_separator=False, front_separator=False)
-
-    def print(self, text: str, align="center", blank_character=" ", left_delimiter=True, right_delimiter=True, back_separator=True,
-              front_separator=True):
-        align = align.lower()
+    def print(self, text: str, print_config = PrintConfig()):
+        #align = align.lower()
 
         colored_text = text
 
@@ -284,63 +178,60 @@ class Printer:
 
                 finalized_text_buffer.append(res)
 
-        for ftext in finalized_text_buffer:
-            if len(ftext) > 5:
-                is_color, color_count = self.__check_color_string_in_dict(ftext, Fore.__dict__, 5)
-                if is_color:
-                    length_of_text = int(len(ftext) - (color_count * 5))
-                else:
-                    length_of_text = len(ftext)
+        for finalized_text in finalized_text_buffer:
+            if len(finalized_text) > 5:
+                is_color, color_count = self.__check_color_string_in_dict(finalized_text, Fore.__dict__, 5)
+                length_of_text = len(finalized_text) if not is_color else len(finalized_text) - color_count
             else:
-                length_of_text = len(ftext)
+                length_of_text = len(finalized_text)
 
             # Calculate the amount of space, taking alignment into consideration
-            if align == "center":
+            if print_config.align == Align.CENTER:
                 # Amount of space is the half of the screen width - the length of the side separators - the half of the text length
                 amount_of_space = int((terminal_size_h - 2) / 2 - length_of_text / 2)
 
                 # Make spacing variables
-                space_left = blank_character * amount_of_space
-                space_right = blank_character * amount_of_space
-            elif align == "right":
+                space_left = print_config.blank_character * amount_of_space
+                space_right = print_config.blank_character * amount_of_space
+            elif print_config.align == Align.RIGHT:
                 # Amount of space is the screen width - the side separator's length - the text length
                 amount_of_space = int((terminal_size_h - 2) - length_of_text)
 
-                space_left = blank_character * (amount_of_space - 1)
+                space_left = print_config.blank_character * (amount_of_space - 1)
                 space_right = " "
-            elif align == "left":
+            elif print_config.align == Align.LEFT:
                 # Amount of space is the screen width - the side separator's length - the text length
                 amount_of_space = int((terminal_size_h - 2) - length_of_text)
 
                 space_left = " "
-                space_right = blank_character * (amount_of_space - 1)
+                space_right = print_config.blank_character * (amount_of_space - 1)
 
             if len(space_left) + len(space_right) + length_of_text <= terminal_size_h:
-                if align == "center":
-                    space_right = space_right + blank_character * (
+                if print_config.align == Align.CENTER:
+                    space_right = space_right + print_config.blank_character * (
                                 (terminal_size_h - 2) - (len(space_left) + len(space_right) + length_of_text))
-                elif align == "right":
-                    space_left = space_left + blank_character * (
+                elif print_config.align == Align.RIGHT:
+                    space_left = space_left + print_config.blank_character * (
                                 (terminal_size_h - 2) - (len(space_left) + len(space_right) + length_of_text))
-                elif align == "left":
-                    space_right = space_right + blank_character * (
+                elif print_config.align == Align.LEFT:
+                    space_right = space_right + print_config.blank_character * (
                                 (terminal_size_h - 2) - (len(space_left) + len(space_right) + length_of_text))
 
-            result = f"{Fore.CYAN}|{Fore.RESET}" + space_left + ftext + space_right + f"{Fore.CYAN}|"
+            result = f"{Fore.CYAN}|{Fore.RESET}" + space_left + finalized_text + space_right + f"{Fore.CYAN}|"
 
-            finalized_text_buffer[finalized_text_buffer.index(ftext)] = result
+            finalized_text_buffer[finalized_text_buffer.index(finalized_text)] = result
 
-        if back_separator:
+        if print_config.back_separator:
             self.separate_line("back")
 
         # Print text in finalized text buffer
         for msg in finalized_text_buffer:
             print(msg)
 
-        if front_separator:
+        if print_config.front_separator:
             self.separate_line("front")
 
-    def __check_color_string_in_dict(self, string: str, dictionary: dict, pattern_look_len: int) -> (bool, int):
+    def __check_color_string_in_dict(self, string: str, dictionary: dict, pattern_look_len: int) -> Tuple[bool, int]:
         count = 0
         for index, char in enumerate(string):
             if char == "\x1b":
@@ -373,14 +264,14 @@ class Printer:
         # Get the width of terminal
         columns = os.get_terminal_size().columns
 
-        separator_symbol = self.__separator_front if position == "front" else self.__separator_back
-        separator_color = self.__separator_front_color if position == "front" else self.__separator_back_color
+        separator_symbol = self.global_config.separator_front if position == "front" else self.global_config.separator_back
+        separator_color = self.global_config.separator_front_color if position == "front" else self.global_config.separator_back_color
 
         # Calculations
-        left_side = f"{self.__delimiter_left_color}{self.__delimiter_left}{' ' * self.__delimiter_space}" if enable_delimiter_left else ""
-        right_side = f"{' ' * self.__delimiter_space}{self.__delimiter_right_color}{self.__delimiter_right}" if enable_delimiter_right else ""
+        left_side = f"{self.global_config.delimiter_left_color}{self.global_config.delimiter_left}{' ' * self.global_config.delimiter_space}" if enable_delimiter_left else ""
+        right_side = f"{' ' * self.global_config.delimiter_space}{self.global_config.delimiter_right_color}{self.global_config.delimiter_right}" if enable_delimiter_right else ""
 
-        middle = f"{separator_color}{separator_symbol * (columns - ((self.__delimiter_space*(enable_delimiter_right + enable_delimiter_left)) + enable_delimiter_right + enable_delimiter_left))}"
+        middle = f"{separator_color}{separator_symbol * (columns - ((self.global_config.delimiter_space*(enable_delimiter_right + enable_delimiter_left)) + enable_delimiter_right + enable_delimiter_left))}"
 
         # Print the separator line
         print(f"{left_side}{middle}{right_side}")
@@ -391,28 +282,29 @@ class Printer:
 #########
 if __name__ == "__main__":
     printer = Printer()
-    printer.configure_options(delimiter_left="|", delimiter_right="|",
+    printer.configure_options(PrinterConfig(delimiter_left="|", delimiter_right="|",
                               delimiter_left_color="cyan", delimiter_right_color="cyan", separator_back="-",
                               separator_front="-", separator_front_color="magenta", separator_back_color="magenta",
-                              delimiter_space=2)
+                              delimiter_space=2))
     printer.test_configurations()
 
-    printer.print(text="This is some text in the center", align="center")
-    printer.print(text="This is some text on the left side", align="left", back_separator=False)
-    printer.print(text="This is some text on the right side", align="right", back_separator=False)
+    printer.print("This is some text in the center", PrintConfig(align=Align.CENTER))
+    printer.print("This is some text on the left side", PrintConfig(align=Align.LEFT, back_separator=False))
+    printer.print("This is some text on the right side", PrintConfig(align=Align.RIGHT, back_separator=False))
 
     printer.log("hello 1")
-    printer.log("hello 1", higherarchy_level=1)
-    printer.log("hello 1", higherarchy_level=2)
-    printer.log("hello", color=Fore.RED)
-    printer.log("hello 1\nhello 1", color=Fore.RED)
-    printer.log("hello 1\nhello1", higherarchy_level=1)
+    printer.log("hello 1",  LogConfig(hierarchy_level=1))
+    printer.log("hello 1",  LogConfig(hierarchy_level=2))
+    printer.log("hello",  LogConfig(color=Fore.RED))
+    printer.log("hello 1\nhello 1",  LogConfig(color=Fore.RED))
+    printer.log("hello 1\nhello1",  LogConfig(hierarchy_level=1))
 
-    printer.log("warn", level=LogLevel.WARN)
-    printer.log("error", level=LogLevel.ERROR)
-    printer.log("success", level=LogLevel.SUCCESS)
+    printer.log("warn", LogConfig(level=LogLevel.WARN))
+    printer.log("error", LogConfig(level=LogLevel.ERROR))
+    printer.log("success", LogConfig(level=LogLevel.SUCCESS))
 
-    printer.log("test", level_padding_char='#', level_padding=20)
-    printer.log("test", level_padding_char='-', level_padding=20, level=LogLevel.WARN)
-    printer.log("test", level_padding_char='.', level_padding=20, level=LogLevel.ERROR)
-    printer.log("test", level_padding_char='>', level_padding=20, level=LogLevel.SUCCESS)
+    printer.log("test",  LogConfig(level_padding_char='#', level_padding=20))
+    printer.log("test",  LogConfig(level_padding_char='-', level_padding=20, level=LogLevel.WARN))
+    printer.log("test",  LogConfig(level_padding_char='.', level_padding=20, level=LogLevel.ERROR))
+    printer.log("test",  LogConfig(level_padding_char='>', level_padding=20, level=LogLevel.SUCCESS))
+
