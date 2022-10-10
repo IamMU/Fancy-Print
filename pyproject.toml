@@ -5,16 +5,14 @@ build-backend = "flit_core.buildapi"
 [project]
 name = "fancyprint"
 version = "0.1.1"
-authors = [
-  { name="MU", email="iammu@duck.com" },
-]
+authors = [{ name = "MU", email = "iammu@duck.com" }]
 description = "A aesthetic replacement to print()"
 readme = "README.md"
 requires-python = ">=3.7"
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: Apache Software License",
-    "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "License :: OSI Approved :: Apache Software License",
+  "Operating System :: OS Independent",
 ]
 
 [project.urls]
