@@ -43,7 +43,7 @@ class Printer:
 
     def log(self, message: str, log_config = LogConfig()) -> None:
         # log level color and string
-        level = str(log_config.level.value).upper()
+        level = str(log_config.level.value)
         color = LogColor[log_config.level.name].value
 
         # level string formatting
@@ -60,7 +60,6 @@ class Printer:
             self.print(f"{text}", PrintConfig(align=Align.LEFT, back_separator=False, front_separator=False))
 
     def print(self, text: str, print_config = PrintConfig()):
-        #align = align.lower()
 
         colored_text = text
 
@@ -181,7 +180,7 @@ class Printer:
         for finalized_text in finalized_text_buffer:
             if len(finalized_text) > 5:
                 is_color, color_count = self.__check_color_string_in_dict(finalized_text, Fore.__dict__, 5)
-                length_of_text = len(finalized_text) if not is_color else len(finalized_text) - color_count
+                length_of_text = len(finalized_text) if not is_color else len(finalized_text) - color_count - 4
             else:
                 length_of_text = len(finalized_text)
 
