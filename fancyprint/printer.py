@@ -39,6 +39,7 @@ class Printer:
         print(f" - SEPARATORS:")
         print(f"     - BACK:  {self.global_config.separator_back_color}{self.global_config.separator_back}")
         print(f"     - FRONT: {self.global_config.separator_front_color}{self.global_config.separator_front}")
+        
     def convert_tags_to_color(self,text):
         pattern = r"<(.*?)>"
         string = text
@@ -48,7 +49,8 @@ class Printer:
             if items in COLORS:
                 ha.append([k for k,v in COLORS.items() if v == COLORS[items]])
                 string=string.replace("<{}>".format(str(items)),str(ha[tag_content.index(items)][0]))
-        return string    
+        return string
+    
     def print(self, text: str, print_config = PrintConfig()):
         text=self.convert_tags_to_color(text)
         colored_text = text
@@ -219,6 +221,7 @@ class Printer:
 
         if print_config.front_separator:
             self.separate_line("front")
+            
     def log(self, message: str, log_config = LogConfig()):
         # log level color and string
         level = str(log_config.level.value)
