@@ -43,6 +43,10 @@ printer.configure_options(PrinterConfig(delimiter_left="|", delimiter_right="|",
 The `Printer` class also has a `print()` method that can be used to print text. The `print()` method can be used as follows:
 
 ```python
+from fancyprint import Printer
+from fancyprint.helpers.types import PrintConfig
+from fancyprint.helpers.constants import Align
+printer=Printer()
 printer.print("This is some text in the center", PrintConfig(align=Align.CENTER, blank_character=" ", left_delimiter=True, right_delimiter=True, back_separator=True,
               front_separator=True))
 
