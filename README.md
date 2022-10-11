@@ -31,7 +31,7 @@ from fancyprint import Printer
 printer = Printer()
 ```
 
-The Printer class has a configure_options() method that can be used to configure the options for the printer. We have a PrinterConfig type for configurations. It is to be passed to print() to modify the configurations for that statement. For Alignment there is an Enum [ Align.LEFT, Align.RIGHT, Align.CENTER ]. The options can be configured as follows:
+The `Printer` class has a `configure_options()` method that can be used to configure the options for the printer. We have a `PrinterConfig` type for configurations. It is to be passed to `print()` to modify the configurations for that statement. For Alignment there is an Enum [ Align.LEFT, Align.RIGHT, Align.CENTER ]. The options can be configured as follows:
 
 ```python
 printer.configure_options(PrinterConfig(delimiter_left="|", delimiter_right="|",
