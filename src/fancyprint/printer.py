@@ -4,12 +4,12 @@
 import os
 from typing import Tuple
 from colorama import init as colorama_init, Fore
-from helpers import PrinterConfig,PrintConfig,LogConfig,LogLevel,LogColor,Align,COLORS
 import re
+from helpers import LogLevel, PrinterConfig, LogConfig, LogColor, PrintConfig, Align
+
 ###########
 # CLASSES #
 ###########
-
 
 
 class Printer:
@@ -29,6 +29,7 @@ class Printer:
         """
         self.global_config = config
 
+
     def test_configurations(self) -> None:
         print(f"CONFIGURATIONS:")
         print(f" - DELIMITERS:")
@@ -38,6 +39,7 @@ class Printer:
         print(f" - SEPARATORS:")
         print(f"     - BACK:  {self.global_config.separator_back_color}{self.global_config.separator_back}")
         print(f"     - FRONT: {self.global_config.separator_front_color}{self.global_config.separator_front}")
+        
         
     def convert_tags_to_color(self,text):
         pattern = r"<(.*?)>"
@@ -220,6 +222,8 @@ class Printer:
 
         if print_config.front_separator:
             self.separate_line("front")
+
+
     def log(self, message: str, log_config = LogConfig()):
         # log level color and string
         level = str(log_config.level.value)
@@ -237,6 +241,7 @@ class Printer:
         for i, msg in enumerate(messages):
             text = f"{indent}{color}{level_str} {msg}" if i == 0 else f"{indent}{'*' * (len(level_str) )}{color} {msg}"
             self.print(f"{text}", PrintConfig(align=Align.LEFT, back_separator=False, front_separator=False))        
+
 
     def __check_color_string_in_dict(self, string: str, dictionary: dict, pattern_look_len: int) -> Tuple[bool, int]:
         count = 0
