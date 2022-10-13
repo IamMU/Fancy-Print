@@ -4,12 +4,12 @@
 import os
 from typing import Tuple
 from colorama import init as colorama_init, Fore
+import re
 from helpers import LogLevel, PrinterConfig, LogConfig, LogColor, PrintConfig, Align
 
 ###########
 # CLASSES #
 ###########
-
 
 
 class Printer:
@@ -30,7 +30,7 @@ class Printer:
         self.global_config = config
 
 
-    def test_configurations(self):
+    def test_configurations(self) -> None:
         print(f"CONFIGURATIONS:")
         print(f" - DELIMITERS:")
         print(f"     - LEFT:  {self.global_config.delimiter_left_color}{self.global_config.delimiter_left}")
@@ -39,28 +39,21 @@ class Printer:
         print(f" - SEPARATORS:")
         print(f"     - BACK:  {self.global_config.separator_back_color}{self.global_config.separator_back}")
         print(f"     - FRONT: {self.global_config.separator_front_color}{self.global_config.separator_front}")
-
-
-    def log(self, message: str, log_config = LogConfig()) -> None:
-        # log level color and string
-        level = str(log_config.level.value)
-        color = LogColor[log_config.level.name].value
-
-        # level string formatting
-        level_str = log_config.level_padding_char * (log_config.level_padding - len(level)) + f"[ {level} ]"
-
-        # Indentation
-        indent = "****" * log_config.hierarchy_level
-
-        # Message separation
-        messages = message.split('\n')
-
-        for i, msg in enumerate(messages):
-            text = f"{indent}{color}{level_str} {msg}" if i == 0 else f"{indent}{'*' * (len(level_str) )}{color} {msg}"
-            self.print(f"{text}", PrintConfig(align=Align.LEFT, back_separator=False, front_separator=False))
-
+        
+        
+    def convert_tags_to_color(self,text):
+        pattern = r"<(.*?)>"
+        string = text
+        tag_content=re.findall(pattern, string, flags=0)
+        ha=[]
+        for items in tag_content:
+            if items in COLORS:
+                ha.append([k for k,v in COLORS.items() if v == COLORS[items]])
+                string=string.replace("<{}>".format(str(items)),str(ha[tag_content.index(items)][0]))
+        return string
+    
     def print(self, text: str, print_config = PrintConfig()):
-
+        text=self.convert_tags_to_color(text)
         colored_text = text
 
         for color in Fore.__dict__:
@@ -229,6 +222,26 @@ class Printer:
 
         if print_config.front_separator:
             self.separate_line("front")
+
+
+    def log(self, message: str, log_config = LogConfig()):
+        # log level color and string
+        level = str(log_config.level.value)
+        color = LogColor[log_config.level.name].value
+
+        # level string formatting
+        level_str = log_config.level_padding_char * (log_config.level_padding - len(level)) + f"[ {level} ]"
+
+        # Indentation
+        indent = "****" * log_config.hierarchy_level
+
+        # Message separation
+        messages = message.split('\n')
+
+        for i, msg in enumerate(messages):
+            text = f"{indent}{color}{level_str} {msg}" if i == 0 else f"{indent}{'*' * (len(level_str) )}{color} {msg}"
+            self.print(f"{text}", PrintConfig(align=Align.LEFT, back_separator=False, front_separator=False))        
+
 
     def __check_color_string_in_dict(self, string: str, dictionary: dict, pattern_look_len: int) -> Tuple[bool, int]:
         count = 0
