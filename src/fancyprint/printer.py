@@ -4,8 +4,7 @@
 import os
 from typing import Tuple
 from colorama import init as colorama_init, Fore
-from .helpers.types import PrinterConfig,PrintConfig,LogConfig
-from .helpers.constants import LogLevel,LogColor,Align,COLORS 
+from helpers import PrinterConfig,PrintConfig,LogConfig,LogLevel,LogColor,Align,COLORS
 import re
 ###########
 # CLASSES #
@@ -23,14 +22,14 @@ class Printer:
         # Configurations
         self.global_config = PrinterConfig()
 
-    def configure_options(self, config: PrinterConfig):
+    def configure_options(self, config: PrinterConfig) -> None:
         """Configure the printer options
         :param config: The configuration object
         :type config: Config
         """
         self.global_config = config
 
-    def test_configurations(self):
+    def test_configurations(self) -> None:
         print(f"CONFIGURATIONS:")
         print(f" - DELIMITERS:")
         print(f"     - LEFT:  {self.global_config.delimiter_left_color}{self.global_config.delimiter_left}")
@@ -39,6 +38,7 @@ class Printer:
         print(f" - SEPARATORS:")
         print(f"     - BACK:  {self.global_config.separator_back_color}{self.global_config.separator_back}")
         print(f"     - FRONT: {self.global_config.separator_front_color}{self.global_config.separator_front}")
+        
     def convert_tags_to_color(self,text):
         pattern = r"<(.*?)>"
         string = text
@@ -48,7 +48,8 @@ class Printer:
             if items in COLORS:
                 ha.append([k for k,v in COLORS.items() if v == COLORS[items]])
                 string=string.replace("<{}>".format(str(items)),str(ha[tag_content.index(items)][0]))
-        return string    
+        return string
+    
     def print(self, text: str, print_config = PrintConfig()):
         text=self.convert_tags_to_color(text)
         colored_text = text
@@ -251,7 +252,7 @@ class Printer:
         else:
             return True, count
 
-    def separate_line(self, position: str, enable_delimiter_left=True, enable_delimiter_right=True):
+    def separate_line(self, position: str, enable_delimiter_left=True, enable_delimiter_right=True) -> None:
         """Prints a separator line
         :param position: The position of the separator ( back/front )
         :type position: str
