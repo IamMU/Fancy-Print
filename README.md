@@ -31,10 +31,10 @@ from fancyprint import Printer
 printer = Printer()
 ```
 
-The `Printer` class has a `configure_options()` method that can be used to configure the options for the printer. We have a `PrinterConfig` type for configurations. It is to be passed to `print()` to modify the configurations for that statement. For Alignment there is an Enum [ Align.LEFT, Align.RIGHT, Align.CENTER ]. The options can be configured as follows:
+The `Printer` class has a `configure_options()` method that can be used to configure the options for the printer. We have a `PrintConfig` type for configurations. It is to be passed to `print()` to modify the configurations for that statement. For Alignment there is an Enum [ Align.LEFT, Align.RIGHT, Align.CENTER ]. The options can be configured as follows:
 
 ```python
-printer.configure_options(PrinterConfig(delimiter_left="|", delimiter_right="|",
+printer.configure_options(PrintConfig(delimiter_left="|", delimiter_right="|",
                               delimiter_left_color="cyan", delimiter_right_color="cyan", separator_back="-",
                               separator_front="-", separator_front_color="magenta", separator_back_color="magenta",
                               delimiter_space=2))
@@ -43,11 +43,11 @@ printer.configure_options(PrinterConfig(delimiter_left="|", delimiter_right="|",
 The `Printer` class also has a `print()` method that can be used to print text. The `print()` method can be used as follows:
 
 ```python
-printer.print("This is some text in the center", PrinterConfig(align=Align.CENTER, blank_character=" ", left_delimiter=True, right_delimiter=True, back_separator=True,
+printer.print("This is some text in the center", PrintConfig(align=Align.CENTER, blank_character=" ", left_delimiter=True, right_delimiter=True, back_separator=True,
               front_separator=True))
 
 # Example
-printer.print("Hello World!", PrinterConfig(align=Align.CENTER, blank_character=" ", left_delimiter=True))
+printer.print("Hello World!", PrintConfig(align=Align.CENTER, blank_character=" ", left_delimiter=True))
 
 ```
 
