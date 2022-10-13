@@ -2,7 +2,7 @@
 <h3 align="center">An aesthetic replacement to print()</h3>
 
 <h6 align="center"><b>Development Status:</b> Planning/Early-Stages</h6>
-
+<h6 align="center"><strong>NOTE: </strong>Current status is unusable and we're doing massive changes to make the project more scalable. As of this period NO ISSUES OR PRS will be accepted!</h6>
 <p align="center">
   <a href="https://pypi.org/project/fancyprint/">
 	<img src="https://img.shields.io/pypi/v/fancyprint?color=blue&label=PyPI&logo=python&logoColor=white&style=for-the-badge" alt="PyPI">
