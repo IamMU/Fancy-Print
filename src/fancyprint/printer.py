@@ -5,6 +5,7 @@ import os
 from typing import Tuple
 from colorama import init as colorama_init, Fore
 import re
+from helpers import COLORS
 from helpers import LogLevel, PrinterConfig, LogConfig, LogColor, PrintConfig, Align
 
 ###########
