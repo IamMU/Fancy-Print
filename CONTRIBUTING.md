@@ -22,7 +22,7 @@ Before we proceed, it's better to know the difference between Git and Github. Gi
 
 We assume you have created an account on Github and installed Git on your System.
 
-Now enter your name and E-mail (used on Github) address in Git, by using following command.
+Now enter your name and E-mail (used on Github) address in Git, by using the following command.
 
 ```
 git config --global user.name "YOUR NAME"
@@ -47,16 +47,16 @@ Before opening an issue, please be sure that your issue hasn't already been aske
 Here are a few things that will help us help resolve your issues:
 
 - A descriptive title that gives an idea of what your issue refers to
-- A thorough description of the issue, (one word descriptions are very hard to understand)
+- A thorough description of the issue, (one-word descriptions are very hard to understand)
 - Screenshots (if appropriate)
 - Links (if appropriate)
 
 ## Step 1 : Fork a project
 
-You can make a copy of the project to your account. This process is called forking a project to your Github account. On Upper right side of project page on Github, you can see -
+You can make a copy of the project to your account. This process is called forking a project to your GitHub account. On the Upper right side of the project page on Github, you can see -
 
 <p align="center">  <img  src="https://i.imgur.com/P0n6f97.png">  </p>
-Click on fork to create a copy of project to your account. This creates a separate copy for you to work on.
+Click on fork to create a copy of the project to your account. This creates a separate copy for you to work on.
 
 <br />
 
@@ -64,23 +64,23 @@ Click on fork to create a copy of project to your account. This creates a separa
 
 ## Step 2 : Clone the forked project
 
-You have forked the project you want to contribute to your github account. To get this project on your development machine we use clone command of git.
+You have forked the project you want to contribute to your GitHub account. To get this project on your development machine we use clone command of git.
 
 ```
-git clone https://github.com//Fancy-Print.git
+git clone https://github.com/<github-username>/Fancy-Print.git
 ``` 
 <br/>
 Now you have the project on your local machine.
 
 <br />
 
-## Step 3 : Add a remote (upstream) to original project repository
+## Step 3 : Add a remote (upstream) to the original project repository
 
 Remote means the remote location of project on Github. By cloning, we have a remote called origin which points to your forked repository. Now we will add a remote to the original repository from where we had forked.
 
 ```
 cd <your-forked-project-folder>
-git remote add upstream https://github.com/IamMU/Fancy-Print.git
+git remote add upstream https://github.com/<github-username>/Fancy-Print.git
 ``` 
 <br/>
 You will see the benefits of adding remote later.
@@ -89,7 +89,7 @@ You will see the benefits of adding remote later.
 
 ## Step 4 : Synchronizing your fork
 
-Open Source projects have a number of contributors who can push code anytime.  So it is necessary to make your forked copy have the new contents of the original one.
+Open Source projects have several contributors who can push code anytime.  So it is necessary to make your forked copy have the new contents of the original one.
 
 ```
 git checkout main
@@ -117,18 +117,18 @@ This will create a new branch out of master branch. Now start working on the pro
 git add --all
 git commit -m "<commit message>"
 ```
-The first command adds all the files or you can add specific files by removing -a and adding the file names. The second command gives a message to your changes so you can know in future what changes this commit makes. If you are solving an issue on original repository, you should add the issue number like #35 to your commit message. This will show the reference to commits in the issue.
+The first command adds all the files or you can add specific files by removing -a and adding the file names. The second command gives a message to your changes so you can know in the future what changes this commit makes. If you are solving an issue on original repository, you should add the issue number like #35 to your commit message. This will show the reference to commits in the issue.
 
 <br />
 
 ## Step 6 : Push code and create a pull request
 
-You now have a new branch containing the modifications you want in the project you forked. Now, push your new branch to your remote github fork. 
+You now have a new branch containing the modifications you want in the project you forked. Now, push your new branch to your remote GitHub fork. 
 
 ```
 git push origin <feature-branch>
 ```
-Now you are ready to help the project by opening a pull request means you now tell the project managers to add the feature or bug fix to original repository. You can open a pull request by clicking on green icon -
+Now you are ready to help the project by opening a pull request means you now tell the project managers to add the feature or bug fix to original repository. You can open a pull request by clicking on the green icon -
 
 <p align="center">  <img  src="https://i.imgur.com/aGaqAD5.png">  </p>
 
@@ -145,12 +145,12 @@ Fantastic! You've already made your first contribution.🥳
 # How can I contribute
 
 There are various ways to contribute to the project : 
-- Bug fixes : If you feel that the current website is not working properly or have some bugs that needs fixing, you can raise an issue regarding the same. 
-- New features : If you think that new features can be added to the project that are relevant, you can again raise an issue regarding it, and explain what and why you want to add that feature. 
-- Updating documentation : If you feel that the current documentations have scope to improve, you can discuss it in by raising an issue.
+- Bug fixes : If you feel that the current website is not working properly or has some bugs that need fixing, you can raise an issue regarding the same. 
+- New features : If you think that new features can be added to the project that is relevant, you can again raise an issue regarding it, and explain what and why you want to add that feature. 
+- Updating documentation : If you feel that the current documentations have scope to improve, you can discuss it by raising an issue.
 - Commenting non-commented code
 
-Any other contribution you feel can be done to the project, you can first discuss with the maintainers and then proceed to contribute.
+Any other contribution you feel can be done to the project, you can first discuss it with the maintainers and then proceed to contribute.
 
 <br>
 
@@ -174,7 +174,7 @@ Any other contribution you feel can be done to the project, you can first discus
 - Overly commented code may be merged but is not recommended.
 Be sure to write good comments that are informative and not too long.
 
-> PR's will not be accepted unless they have been thoroughly tested and explained, and screenshots should also be provided in the PR.
+> PRs will not be accepted unless they have been thoroughly tested and explained, and screenshots should also be provided in the PR.
 
 Thanks for going through all that 😉.
 <br>
