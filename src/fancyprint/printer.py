@@ -293,7 +293,7 @@ def separate_line(preset: SeparatorPreset | Preset = None,
                   enable_right_delimiter: bool = True,
                   delimiter_space_amount: int = 0, delimiter_space_symbol: str = " ",
                   separator_symbol: str = "-", separator_color: Color = Color.MAGENTA,
-                  enable_separator: bool = True) -> None:
+                  enable_separator: bool = True, test_mode: bool = False, testing_terminal_width: int = 100) -> None:
     # Check if preset is being used or not
     if preset is None:
         # Do nothing, all variables will be same
@@ -329,48 +329,78 @@ def separate_line(preset: SeparatorPreset | Preset = None,
         else:
             raise TypeError(f"Expected types: SeperatorPreset or Preset | Found: {type(preset).__name__}")
 
-    # Calculate things to print
+    #############
+    # Variables #
+    #############
 
-    # Getting terminal width (in chars)
-    terminal_width = os.get_terminal_size().columns
+    # Getting terminal width (in chars) | If testing mode, using custom width
+    if not test_mode:
+        terminal_width = os.get_terminal_size().columns
+    elif test_mode:
+        terminal_width = testing_terminal_width
 
-    # Calculating the left side
-    left_side = f"{(delimiter_left_color + delimiter_left + (delimiter_space_symbol * delimiter_space_amount)) if enable_left_delimiter else ''}"
+    # Make variables for the different areas of the separator line
+    left_side = str()
+    middle = str()
+    right_side = str()
 
-    # Calculating the right side
-    right_side = f"{((delimiter_space_symbol * delimiter_space_amount) + delimiter_right_color + delimiter_right) if enable_right_delimiter else ''}"
+    ################
+    # Calculations #
+    ################
 
-    # Calculating the middle
+    # Left side
+    if enable_left_delimiter:
+        left_side = (delimiter_left_color + delimiter_left) + (delimiter_space_symbol * delimiter_space_amount)
 
-    # Seperator symbol length is terminal width - 1 per delimiter - amount of delimiter space
-    middle = f"{separator_color}{separator_symbol * int(terminal_width - (enable_right_delimiter + enable_right_delimiter) + delimiter_space_amount)}"
+    # Right side
+    if enable_right_delimiter:
+        right_side = (delimiter_space_symbol * delimiter_space_amount) + (delimiter_right_color + delimiter_right)
 
-    # Printing everything to terminal
-    print(f"{left_side}{middle}{right_side}")
+    # Middle
+
+    # Get length of the other sides
+    left_side_length = len(left_side)
+    right_side_length = len(right_side)
+
+    # Remove color code length if it is used
+    left_side_length -= (Color.COLOR_CODE_LENGTH if left_side_length > 0 else 0)
+    right_side_length -= (Color.COLOR_CODE_LENGTH if right_side_length > 0 else 0)
+
+    # Calculate amount of space to exclude
+    exclude_space = int(terminal_width - left_side_length - right_side_length)
+
+    if enable_separator:
+        middle = (separator_color + (separator_symbol * exclude_space))
+    else:
+        # Else insert blank space instead of symbol
+        middle = " " * exclude_space
+
+    # Print the calculated parts to the screen | Add white at end to reset color
+    print(left_side + middle + right_side + Color.WHITE)
 
 
 #########
 # TESTS #
 #########
 if __name__ == "__main__":
-    # printer = Printer()
-    #
-    # #################
-    # # DEFAULT TESTS #
-    # #################
-    #
-    # # All must work else not ready for production
-    # # test_text = f"Hi there, I am a collection of characters!" * 2
-    # #
-    # # printer.print(test_text)
-    # # printer.print(test_text, PrintConfig(
-    # #     align=Align.LEFT,
-    # #     back_separator=False
-    # # ))
-    # # printer.print(test_text, PrintConfig(
-    # #     align=Align.RIGHT,
-    # #     back_separator=False
-    # # ))
-    #
-    # printer.separate_line("back", delimiter_left="╭", delimiter_right="╮")
+    #########
+    # TESTS #
+    #########
+
+    # Variables
+    custom_separator_preset = SeparatorPreset(
+        delimiter_left=">",
+        delimiter_right="<"
+    )
+
+    custom_global_preset = Preset(
+        separator_preset=SeparatorPreset(
+            delimiter_right="{",
+            delimiter_left="}"
+        )
+    )
+
+    # Separator Tests
+
+    # TODO: Write separator tests
     separate_line()
