@@ -1,1 +1,1 @@
-from .printer import(Printer)
+from .ftypes.color import Color
