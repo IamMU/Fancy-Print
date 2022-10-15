@@ -8,7 +8,7 @@ Please note that :
 - NO PR will be accepted unless assigned in issues
 - NO One should change file structure like deleting src and creating some other directory
 </br>
-> We have a [Code of Conduct](Fancy-Print/CODE_OF_CONDUCT.md), please follow it in all your interactions with the project.
+> We have a [Code of Conduct](Fancy-Print/CODE_OF_CONDUCT), please follow it in all your interactions with the project.
 
 <br>
 
