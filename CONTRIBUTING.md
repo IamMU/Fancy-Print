@@ -16,7 +16,7 @@ Please note that :
 
 <br>
 
-# Basics of Git and GitHub
+# Basics of Git and GitHub for Newcomers
 
 Before we proceed, it's better to know the difference between Git and Github. Git is a version control system (VCS) that allows us to keep track of the history of our source code , whereas GitHub is a service that hosts Git projects. 
 
@@ -36,7 +36,7 @@ This is an important step to mark your commits to your name and email.
 
 <br>
 
-## Now We'll see the basic workflow of Contributing to Open Source
+## Now We'll see the basic workflow of Contributing
 <br />
 
 ## Step 0 : Opening an issue
@@ -67,7 +67,7 @@ Click on fork to create a copy of project to your account. This creates a separa
 You have forked the project you want to contribute to your github account. To get this project on your development machine we use clone command of git.
 
 ```
-git clone https://github.com/IamMU/Fancy-Print.git
+git clone https://github.com//Fancy-Print.git
 ``` 
 <br/>
 Now you have the project on your local machine.
@@ -89,7 +89,7 @@ You will see the benefits of adding remote later.
 
 ## Step 4 : Synchronizing your fork
 
-Open Source projects have a number of contributors who can push code anytime. So it is necessary to make your forked copy equal with the original repository. The remote added above called Upstream helps in this.
+Open Source projects have a number of contributors who can push code anytime.  So it is necessary to make your forked copy have the new contents of the original one.
 
 ```
 git checkout main
@@ -132,11 +132,9 @@ Now you are ready to help the project by opening a pull request means you now te
 
 <p align="center">  <img  src="https://i.imgur.com/aGaqAD5.png">  </p>
 
-Remember your upstream base branch should be main and source should be your feature branch. Click on create pull request and add a name to your pull request. You can also describe your feature.
+Remember your upstream base branch should be main and source should be your feature branch. Click on create pull request and add a name to your pull request. Include a thorough explanation of the modifications you made as well as which issues your PR addresses.
 
 Fantastic! You've already made your first contribution.🥳
-
-#### Happy Coding 👩‍💻👩‍💻
 
 <br>
 
@@ -150,6 +148,7 @@ There are various ways to contribute to the project :
 - Bug fixes : If you feel that the current website is not working properly or have some bugs that needs fixing, you can raise an issue regarding the same. 
 - New features : If you think that new features can be added to the project that are relevant, you can again raise an issue regarding it, and explain what and why you want to add that feature. 
 - Updating documentation : If you feel that the current documentations have scope to improve, you can discuss it in by raising an issue.
+- Commenting non-commented code
 
 Any other contribution you feel can be done to the project, you can first discuss with the maintainers and then proceed to contribute.
 
@@ -176,6 +175,11 @@ Any other contribution you feel can be done to the project, you can first discus
 Be sure to write good comments that are informative and not too long.
 
 > PR's will not be accepted unless they have been thoroughly tested and explained, and screenshots should also be provided in the PR.
+
+Thanks for going through all that 😉.
+<br>
+
+#### Happy Coding 👩‍💻👩‍💻
 
 <br>
 
