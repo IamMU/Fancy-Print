@@ -294,6 +294,50 @@ def separate_line(preset: SeparatorPreset | Preset = None,
                   delimiter_space_amount: int = 0, delimiter_space_symbol: str = " ",
                   separator_symbol: str = "-", separator_color: Color = Color.MAGENTA,
                   enable_separator: bool = True, test_mode: bool = False, testing_terminal_width: int = 100) -> None:
+    """Prints a separator line
+    :param preset: Use a preset for customizations
+    :type preset: SeparatorPreset | Preset
+
+    :param delimiter_left: Symbol for the left delimiter (Default: "|")
+    :type delimiter_left: str
+
+    :param delimiter_left_color: Color for the left delimiter (Default: Color.CYAN)
+    :type delimiter_left_color: Color
+
+    :param enable_left_delimiter: Whether left delimiter is to be printed (Default: True)
+    :type enable_left_delimiter: bool
+
+    :param delimiter_right: Symbol for the right delimiter (Default: "|")
+    :type delimiter_right: str
+
+    :param delimiter_right_color: Color for the right delimiter (Default: Color.CYAN)
+    :type delimiter_right_color: Color
+
+    :param enable_right_delimiter: Whether right delimiter is to be printed (Default: True)
+    :type enable_right_delimiter: bool
+
+    :param delimiter_space_symbol: Symbol for the delimiter spacing (Default: " ")
+    :type delimiter_space_symbol: str
+
+    :param delimiter_space_amount: Amount of delimiter space to be applied before separator symbol start/end
+     (Default: 0)
+    :type delimiter_space_amount: int
+
+    :param separator_symbol: Symbol for the separator (middle) (Default: "-")
+    :type separator_symbol: str
+
+    :param separator_color: Color for the separator (middle) (Default: Color.MAGENTA)
+    :type separator_color: Color
+
+    :param enable_separator: Whether to enable the separator symbol, otherwise it will be " " (Default: True)
+    :type enable_separator: bool
+
+    :param test_mode: Whether to enable test mode (For developers only) (Default: False)
+    :type test_mode: bool
+
+    :param testing_terminal_width: Artificial terminal width (For developers only) (Default: 100)
+    :type testing_terminal_width: int
+    """
     # Check if preset is being used or not
     if preset is None:
         # Do nothing, all variables will be same
