@@ -8,7 +8,7 @@ import re
 from helpers import COLORS
 from helpers import LogLevel, PrinterConfig, LogConfig, LogColor, PrintConfig, Align
 
-from ftypes import Color, Preset, SeparatorPreset, PrinterPreset
+from ftypes import Color, Preset, SeparatorPreset, PrinterPreset, Align
 ###########
 # CLASSES #
 ###########
@@ -286,6 +286,97 @@ class Printer:
         print(f"{left_side}{middle}{right_side}")
 
 
+def give_color_codes_data(text: str, color_code_len: int = Color.COLOR_CODE_LENGTH) -> (bool, int):
+    """Gives color code data of a string, namely if color is being used, amount of colors used, ...
+
+    :param text: The text to check
+    :type text: str
+
+    :param color_code_len: Amount of space a color code has (Default: Color.COLOR_CODE_LENGTH)
+    :type color_code_len: int
+    """
+    #############
+    # VARIABLES #
+    #############
+    count = 0
+
+    ################
+    # CALCULATIONS #
+    ################
+
+    # Loop through the text
+    for index, char in enumerate(text):
+        # If the current character is an ansi escape sequence
+        if char == "\x1b":
+            # Set the pattern to the current index till current index plus the color code length, hence the entire
+            # color code
+            full_pattern = text[index: index + color_code_len]
+
+            # If the code is valid then add 1 to the count
+            if full_pattern in Color.__dict__.values():
+                count += 1
+
+    #########################
+    # RETURNING THE RESULTS #
+    #########################
+
+    # If the count is 0, means no color was found, else return True
+    if count == 0:
+        return False, count
+    else:
+        return True, count
+
+
+def tag_to_color(text: str) -> str:
+    """Converts a string with color tags to a string with color (codes)
+
+    :param text: The text to be converted
+    :type text: str
+    """
+    #############
+    # VARIABLES #
+    #############
+    result = text
+
+    # TODO: Write the following variable in another position
+    tag_map = {
+        # MAIN COLORS
+        "w": Color.WHITE,
+        "r": Color.RED,
+        "y": Color.YELLOW,
+        "g": Color.GREEN,
+        "c": Color.CYAN,
+        "b": Color.BLUE,
+        "bl": Color.BLACK,
+        "m" : Color.MAGENTA,
+        # LIGHT VERSIONS
+        "lw": Color.DIM_WHITE,
+        "lr": Color.RED,
+        "ly": Color.LIGHT_YELLOW,
+        "lg": Color.LIGHT_GREEN,
+        "lc": Color.LIGHT_CYAN,
+        "lb": Color.LIGHT_BLUE,
+        "lbl": Color.LIGHT_BLACK,
+        "lm": Color.LIGHT_MAGENTA,
+    }
+
+    ##############
+    # CONVERSION #
+    ##############
+
+    # Loop through the tags and their respective codes
+    for tag in tag_map.keys():
+        final_code = f"<{tag}>"
+
+        # Replace the tag with the color code (if it exists in the text)
+        result = result.replace(final_code, tag_map[tag])
+
+    ########################
+    # RETURNING THE RESULT #
+    ########################
+    return result
+
+
 def separate_line(preset: SeparatorPreset | Preset = None,
                   delimiter_left: str = "|", delimiter_left_color: Color = Color.CYAN,
                   enable_left_delimiter: bool = True,
@@ -295,6 +386,7 @@ def separate_line(preset: SeparatorPreset | Preset = None,
                   separator_symbol: str = "-", separator_color: Color = Color.MAGENTA,
                   enable_separator: bool = True, test_mode: bool = False, testing_terminal_width: int = 100) -> None:
     """Prints a separator line
+
     :param preset: Use a preset for customizations
     :type preset: SeparatorPreset | Preset
 
@@ -419,8 +511,118 @@ def separate_line(preset: SeparatorPreset | Preset = None,
         # Else insert blank space instead of symbol
         middle = " " * exclude_space
 
+    ############
+    # PRINTING #
+    ############
+
     # Print the calculated parts to the screen | Add white at end to reset color
     print(left_side + middle + right_side + Color.WHITE)
+
+
+def print(text: str, align: Align = Align.CENTER,
+          preset: PrinterPreset | Preset = None,
+          separator_preset: SeparatorPreset | Preset = None,
+          delimiter_left: str = "|", delimiter_left_color: Color = Color.CYAN, enable_left_delimiter: bool = True,
+          delimiter_space_amount: int = 0, delimiter_space_symbol: str = " ",
+          delimiter_right: str = "|", delimiter_right_color: Color = Color.CYAN, enable_right_delimiter: bool = True,
+          separator_left_delimiter: str = "|", separator_left_delimiter_color: Color = Color.CYAN,
+          enable_left_separator_delimiter: bool = True,
+          separator_right_delimiter: str = "|", separator_right_delimiter_color: Color = Color.CYAN,
+          enable_right_separator_delimiter: bool = True,
+          separator_symbol: str = "-", separator_color: Color = Color.MAGENTA, enable_separator_symbol: bool = True,
+          separator_delimiter_space_amount: int = 0, separator_delimiter_space_symbol: str = " ",
+          enable_back_separator: bool = True, enable_front_separator: bool = True,
+          test_mode: bool = False, testing_terminal_width: int = 100) -> None:
+    """Prints text to console/terminal emulator.
+
+    :param text: The text to print
+    :type text: str
+
+    :param align: The alignment for the text (Default: Align.CENTER)
+    :type align: Align
+
+    :param preset: Preset to use for customizations (Default: None)
+    :type preset: PrinterPreset | Preset
+
+    :param separator_preset: Preset to use for the separator (Default: None)
+    :type separator_preset: SeparatorPreset | Preset
+
+    :param delimiter_left: Symbol for the left delimiter (Default: "|")
+    :type delimiter_left: str
+
+    :param delimiter_left_color: Color for the left delimiter (Default: Color.CYAN)
+    :type delimiter_left_color: Color
+
+    :param enable_left_delimiter: Whether to print the left delimiter (Default: True)
+    :type enable_left_delimiter: bool
+
+    :param delimiter_right: Symbol for the right delimiter (Default: "|")
+    :type delimiter_right: str
+
+    :param delimiter_right_color: Color for the right delimiter (Default: Color.CYAN)
+    :type delimiter_right_color: Color
+
+    :param enable_right_delimiter: Whether to print the right delimiter (Default: True)
+    :type enable_right_delimiter: bool
+
+    :param delimiter_space_amount: Amount of delimiter space to print on both sides (Default: 0)
+    :type delimiter_space_amount: int
+
+    :param delimiter_space_symbol: Symbol for the delimiter space area (Default: " ")
+    :type delimiter_space_symbol: str
+
+    :param separator_left_delimiter: Symbol for the left delimiter of both separators (Front/Back) (Default: "|")
+    :type separator_left_delimiter: str
+
+    :param separator_left_delimiter_color: Color for the left delimiter of both separators (Front/Back)
+     (Default: Color.CYAN)
+    :type separator_left_delimiter_color: Color
+
+    :param enable_left_separator_delimiter: Whether to enable left delimiter of both separators (Front/Back)
+     (Default: True)
+    :type enable_left_separator_delimiter: bool
+
+    :param separator_right_delimiter: Symbol for the right delimiter of both separators (Front/Back) (Default: "|")
+    :type separator_right_delimiter: str
+
+    :param separator_right_delimiter_color: Color for the right delimiter of both separators (Front/Back)
+     (Default: Color.CYAN)
+    :type separator_right_delimiter_color: Color
+
+    :param enable_right_separator_delimiter: Whether to enable the right delimiter both separators (Front/Back)
+     (Default: True)
+    :type enable_right_separator_delimiter: bool
+
+    :param separator_symbol: Symbol for both separators (Front/Back) (Default: "-")
+    :type separator_symbol: str
+
+    :param separator_color: Color for the separator symbol (Default: Color.MAGENTA)
+    :type separator_color: Color
+
+    :param enable_separator_symbol: Whether to enable separator symbol (Default: True) | If False " " will be printed
+     instead
+    :type enable_separator_symbol: bool
+
+    :param separator_delimiter_space_symbol: Symbol for the delimiter space in both separators (Front/Back)
+     (Default: " ")
+    :type separator_delimiter_space_symbol: str
+
+    :param separator_delimiter_space_amount: Amount of delimiter space for both separators (Front/Back) (Default: 0)
+    :type separator_delimiter_space_amount: int
+
+    :param enable_back_separator: Whether to print the back separator (Default: True)
+    :type enable_back_separator: bool
+
+    :param enable_front_separator: Whether to print the front separator (Default: True)
+    :type enable_front_separator: bool
+
+    :param test_mode: Whether to use artificial values (for developers only) (Default: False)
+    :type test_mode: bool
+
+    :param testing_terminal_width: Artificial terminal width to be used (for developers only) (Default: False)
+    :type testing_terminal_width: int
+    """
+    pass
 
 
 #########
@@ -444,7 +646,12 @@ if __name__ == "__main__":
         )
     )
 
+    testing_text_color_codes = f"<r>This is some red<b> with some blue <g>and some green <w>:D"
+
     # Separator Tests
 
+    print(tag_to_color(testing_text_color_codes))
+    print(give_color_codes_data(tag_to_color(testing_text_color_codes), Color.COLOR_CODE_LENGTH))
+
     # TODO: Write separator tests
-    separate_line()
+    # separate_line()
