@@ -32,5 +32,28 @@ class Color:
     LIGHT_BLACK = Fore.LIGHTBLACK_EX
     LIGHT_MAGENTA = Fore.LIGHTMAGENTA_EX
 
+    # TAGS
+    tag_map = {
+        # MAIN COLORS
+        "w": WHITE,
+        "r": RED,
+        "y": YELLOW,
+        "g": GREEN,
+        "c": CYAN,
+        "b": BLUE,
+        "bl": BLACK,
+        "m": MAGENTA,
+        # Uncomment when solution for this found
+        # # LIGHT VERSIONS
+        # "lw": DIM_WHITE,
+        # "lr": RED,
+        # "ly": LIGHT_YELLOW,
+        # "lg": LIGHT_GREEN,
+        # "lc": LIGHT_CYAN,
+        # "lb": LIGHT_BLUE,
+        # "lbl": LIGHT_BLACK,
+        # "lm": LIGHT_MAGENTA,
+    }
+
     # OTHER
     COLOR_CODE_LENGTH = 5

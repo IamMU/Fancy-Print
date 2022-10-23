@@ -16,4 +16,4 @@ class Preset:
     separator_preset: SeparatorPreset = SeparatorPreset()
 
     # The print preset
-    print_preset: PrinterPreset = PrinterPreset()
+    printer_preset: PrinterPreset = PrinterPreset()

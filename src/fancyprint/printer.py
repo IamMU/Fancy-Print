@@ -2,6 +2,7 @@
 # IMPORTING LIBRARIES #
 #######################
 import os
+import time
 from typing import Tuple, Optional
 from colorama import init as colorama_init, Fore
 import re
@@ -9,6 +10,7 @@ from helpers import COLORS
 from helpers import LogLevel, PrinterConfig, LogConfig, LogColor, PrintConfig, Align
 
 from ftypes import Color, Preset, SeparatorPreset, PrinterPreset, Align
+
 ###########
 # CLASSES #
 ###########
@@ -31,7 +33,6 @@ class Printer:
         """
         self.global_config = config
 
-
     def test_configurations(self) -> None:
         print(f"CONFIGURATIONS:")
         print(f" - DELIMITERS:")
@@ -42,7 +43,7 @@ class Printer:
         print(f"     - BACK:  {self.global_config.separator_back_color}{self.global_config.separator_back}")
         print(f"     - FRONT: {self.global_config.separator_front_color}{self.global_config.separator_front}")
 
-    def convert_tags_to_color(self,text):
+    def convert_tags_to_color(self, text):
         pattern = r"<(.*?)>"
         result = text
         tag_content = re.findall(pattern, result, flags=0)
@@ -54,7 +55,7 @@ class Printer:
         return result
 
     def print(self, text: str, print_config=PrintConfig()):
-        text=self.convert_tags_to_color(text)
+        text = self.convert_tags_to_color(text)
         colored_text = text
 
         for color in Fore.__dict__:
@@ -181,8 +182,10 @@ class Printer:
             # Calculate the amount of space, taking alignment into consideration
             if print_config.align == Align.CENTER:
                 # Amount of space is the half of the screen width - the length of the side separators - the half of the text length
-                amount_of_space = int((((terminal_size_h - self.global_config.delimiter_space - 2) / 2) - (length_of_text / 2)))
-                amount_of_space = int(((terminal_size_h - self.global_config.delimiter_space - 2)/2) - (length_of_text/2))
+                amount_of_space = int(
+                    (((terminal_size_h - self.global_config.delimiter_space - 2) / 2) - (length_of_text / 2)))
+                amount_of_space = int(
+                    ((terminal_size_h - self.global_config.delimiter_space - 2) / 2) - (length_of_text / 2))
                 print(amount_of_space)
 
                 # Make spacing variables
@@ -241,7 +244,7 @@ class Printer:
         messages = message.split('\n')
 
         for i, msg in enumerate(messages):
-            text = f"{indent}{color}{level_str} {msg}" if i == 0 else f"{indent}{'*' * (len(level_str) )}{color} {msg}"
+            text = f"{indent}{color}{level_str} {msg}" if i == 0 else f"{indent}{'*' * (len(level_str))}{color} {msg}"
             self.print(f"{text}", PrintConfig(align=Align.LEFT, back_separator=False, front_separator=False))
 
     def __check_color_string_in_dict(self, string: str, dictionary: dict, pattern_look_len: int) -> Tuple[bool, int]:
@@ -280,7 +283,7 @@ class Printer:
         left_side = f"{self.global_config.delimiter_left_color}{delimiter_left}{' ' * self.global_config.delimiter_space}" if enable_delimiter_left else ""
         right_side = f"{' ' * self.global_config.delimiter_space}{self.global_config.delimiter_right_color}{delimiter_right}" if enable_delimiter_right else ""
 
-        middle = f"{separator_color}{separator_symbol * (columns - ((self.global_config.delimiter_space*(enable_delimiter_right + enable_delimiter_left)) + enable_delimiter_right + enable_delimiter_left))}"
+        middle = f"{separator_color}{separator_symbol * (columns - ((self.global_config.delimiter_space * (enable_delimiter_right + enable_delimiter_left)) + enable_delimiter_right + enable_delimiter_left))}"
 
         # Print the separator line
         print(f"{left_side}{middle}{right_side}")
@@ -338,43 +341,41 @@ def tag_to_color(text: str) -> str:
     #############
     result = text
 
-    # TODO: Write the following variable in another position
-    tag_map = {
-        # MAIN COLORS
-        "w": Color.WHITE,
-        "r": Color.RED,
-        "y": Color.YELLOW,
-        "g": Color.GREEN,
-        "c": Color.CYAN,
-        "b": Color.BLUE,
-        "bl": Color.BLACK,
-        "m" : Color.MAGENTA,
-        # LIGHT VERSIONS
-        "lw": Color.DIM_WHITE,
-        "lr": Color.RED,
-        "ly": Color.LIGHT_YELLOW,
-        "lg": Color.LIGHT_GREEN,
-        "lc": Color.LIGHT_CYAN,
-        "lb": Color.LIGHT_BLUE,
-        "lbl": Color.LIGHT_BLACK,
-        "lm": Color.LIGHT_MAGENTA,
-    }
-
     ##############
     # CONVERSION #
     ##############
 
     # Loop through the tags and their respective codes
-    for tag in tag_map.keys():
+    for tag in Color.tag_map.keys():
         final_code = f"<{tag}>"
 
         # Replace the tag with the color code (if it exists in the text)
-        result = result.replace(final_code, tag_map[tag])
+        result = result.replace(final_code, Color.tag_map[tag])
 
     ########################
     # RETURNING THE RESULT #
     ########################
     return result
+
+
+# TODO: Check if this is really needed
+def colored_to_uncolored(text: str, tags: bool = True) -> str:
+    """Converts a string with color codes to a non-colored string
+    Parameters:
+        text -- The text to convert
+        tags -- Whether to convert from color tags"""
+    # If remove tags
+    if tags:
+        # Loop through tags list
+        for tag in Color.tag_map.keys():
+            # Add syntax to tag
+            color_code = f"<{tag}>"
+
+            # Remove the tag from the text
+            text = text.replace(color_code, "")
+
+    # Return the result
+    return text
 
 
 def separate_line(preset: SeparatorPreset | Preset = None,
@@ -519,20 +520,55 @@ def separate_line(preset: SeparatorPreset | Preset = None,
     print(left_side + middle + right_side + Color.WHITE)
 
 
-def print(text: str, align: Align = Align.CENTER,
-          preset: PrinterPreset | Preset = None,
-          separator_preset: SeparatorPreset | Preset = None,
-          delimiter_left: str = "|", delimiter_left_color: Color = Color.CYAN, enable_left_delimiter: bool = True,
-          delimiter_space_amount: int = 0, delimiter_space_symbol: str = " ",
-          delimiter_right: str = "|", delimiter_right_color: Color = Color.CYAN, enable_right_delimiter: bool = True,
-          separator_left_delimiter: str = "|", separator_left_delimiter_color: Color = Color.CYAN,
-          enable_left_separator_delimiter: bool = True,
-          separator_right_delimiter: str = "|", separator_right_delimiter_color: Color = Color.CYAN,
-          enable_right_separator_delimiter: bool = True,
-          separator_symbol: str = "-", separator_color: Color = Color.MAGENTA, enable_separator_symbol: bool = True,
-          separator_delimiter_space_amount: int = 0, separator_delimiter_space_symbol: str = " ",
-          enable_back_separator: bool = True, enable_front_separator: bool = True,
-          test_mode: bool = False, testing_terminal_width: int = 100) -> None:
+def get_pattern_count(text: str, *patterns) -> int:
+    """Returns amount of occurrences of x patterns in given string
+    Parameters:
+        text -- The text to be used for searching
+        *patterns -- Patterns to search for"""
+
+    #############
+    # VARIABLES #
+    #############
+    results = list()
+
+    ################
+    # CALCULATIONS #
+    ################
+
+    # Loop through all the patterns
+    for pattern in patterns:
+        # Create the regular expression
+        regex = re.compile(pattern)
+
+        # Search for all occurrences of the pattern in the text
+        values = regex.findall(text)
+
+        # Add the found occurrences in the results variable
+        results.extend(values)
+
+    # Return the result
+    return len(results)
+
+
+def pretty_print(text: str, align: Align = Align.CENTER,
+                 preset: PrinterPreset | Preset = None,
+                 separator_preset: SeparatorPreset | Preset = None,
+                 delimiter_left: str = "|", delimiter_left_color: Color = Color.CYAN,
+                 enable_left_delimiter: bool = True,
+                 delimiter_space_amount: int = 0, delimiter_space_symbol: str = " ",
+                 delimiter_right: str = "|", delimiter_right_color: Color = Color.CYAN,
+                 enable_right_delimiter: bool = True,
+                 separator_left_delimiter: str = "|", separator_left_delimiter_color: Color = Color.CYAN,
+                 enable_left_separator_delimiter: bool = True,
+                 separator_right_delimiter: str = "|", separator_right_delimiter_color: Color = Color.CYAN,
+                 enable_right_separator_delimiter: bool = True,
+                 separator_symbol: str = "-", separator_color: Color = Color.MAGENTA,
+                 enable_separator_symbol: bool = True,
+                 separator_delimiter_space_amount: int = 0, separator_delimiter_space_symbol: str = " ",
+                 enable_back_separator: bool = True, enable_front_separator: bool = True,
+                 hyphenation: bool = True,
+                 test_mode: bool = False, testing_terminal_width: int = 100,
+                 color_code_length: Color = Color.COLOR_CODE_LENGTH) -> None:
     """Prints text to console/terminal emulator.
 
     :param text: The text to print
@@ -622,7 +658,251 @@ def print(text: str, align: Align = Align.CENTER,
     :param testing_terminal_width: Artificial terminal width to be used (for developers only) (Default: False)
     :type testing_terminal_width: int
     """
-    pass
+    # Check if preset is None else assign the respective values to the respective variables
+
+    # For printer preset
+    if preset is None:
+        # Do nothing if no preset is used
+        pass
+    else:
+        # If preset is being used check if it's global or not, else raise TypeError
+        if type(preset) is PrinterPreset:
+            # Assign variables to respective values
+            delimiter_left = preset.delimiter_left
+            delimiter_left_color = preset.delimiter_left_color
+
+            delimiter_right = preset.delimiter_right
+            delimiter_right_color = preset.delimiter_right_color
+
+            delimiter_space_symbol = preset.delimiter_space_symbol
+            delimiter_space_amount = preset.delimiter_space_amount
+
+            hyphenation = preset.hyphenation
+        elif type(preset) is Preset:
+            # Assign variables to respective printer preset values
+            delimiter_left = preset.printer_preset.delimiter_left
+            delimiter_left_color = preset.printer_preset.delimiter_left_color
+
+            delimiter_right = preset.printer_preset.delimiter_right
+            delimiter_right_color = preset.printer_preset.delimiter_right_color
+
+            delimiter_space_symbol = preset.printer_preset.delimiter_space_symbol
+            delimiter_space_amount = preset.printer_preset.delimiter_space_amount
+
+            hyphenation = preset.hyphenation
+        else:
+            raise TypeError(f"Expected types: PrinterPreset or Preset | Found: {type(preset).__name__}")
+
+    # For separator preset
+    if separator_preset is None:
+        # Do nothing if no preset is used
+        pass
+    else:
+        # If preset is being used check if it's global or not, else raise TypeError
+        if type(separator_preset) is SeparatorPreset:
+            # Assign variables to respective values
+            separator_left_delimiter = separator_preset.delimiter_left
+            separator_left_delimiter_color = separator_preset.delimiter_left_color
+
+            separator_right_delimiter = separator_preset.delimiter_right
+            separator_right_delimiter_color = separator_preset.delimiter_right_color
+
+            separator_delimiter_space_symbol = separator_preset.delimiter_space_symbol
+            separator_delimiter_space_amount = separator_preset.delimiter_space_amount
+        elif type(separator_preset) is Preset:
+            # Assign variables to respective separator preset values
+            separator_left_delimiter = separator_preset.separator_preset.delimiter_left
+            separator_left_delimiter_color = separator_preset.separator_preset.delimiter_left_color
+
+            separator_right_delimiter = separator_preset.separator_preset.delimiter_right
+            separator_right_delimiter_color = separator_preset.separator_preset.delimiter_right_color
+
+            separator_delimiter_space_symbol = separator_preset.separator_preset.delimiter_space_symbol
+            separator_delimiter_space_amount = separator_preset.separator_preset.delimiter_space_amount
+        else:
+            raise TypeError(f"Expected types: SeparatorPreset or Preset | Found: {type(separator_preset).__name__}")
+
+    #############
+    # Variables #
+    #############
+
+    # Convert text tags to color
+    # text = tag_to_color(text)
+
+    # Length of text (Remove all color code lengths)
+    text_length = len(text) - (Color.COLOR_CODE_LENGTH * give_color_codes_data(text)[1])
+
+    # Get terminal width
+    terminal_width = os.get_terminal_size().columns
+
+    # Available width for text
+    text_available_length = terminal_width - (delimiter_space_amount * 2) - \
+                            (enable_left_delimiter + enable_right_delimiter)
+
+    # List that contains lines to print
+    lines = list()
+
+    # print(f"Terminal width: {terminal_width}\nAvailable Length for text: {text_available_length}\n"
+    #       f"Text Length(!COLOR): {text_length}\nText Length(COLOR): {len(text)}")
+
+    ###################################
+    # PREPARING TEXT FOR CALCULATIONS #
+    ###################################
+
+    # If given text is greater than available space, split text on lines
+    if text_length > text_available_length:
+        # Variables
+        char_count = 0
+        previous_char_count = char_count
+
+        # Loop through the text characters
+        for index, character in enumerate(text):
+            # Increment character counter by 1
+            char_count += 1
+
+            # Tags amount
+            tags_amount = get_pattern_count(text[previous_char_count:char_count], r"<.>", r"<..>", r"<...>")
+            # print(str(tags_amount) + f"- {text[previous_char_count:char_count]}")
+
+            # Check if current character is a new line
+            if character == "\n":
+                # Start index is previous character, i.e. where we ended the buffer in the last iteration
+                start_index = previous_char_count
+
+                # End index is the current character count EXCLUDING the new line character
+                end_index = char_count - 1
+
+                # Append the buffer to the lines list
+                lines.append(text[start_index:end_index])
+
+                # Update the previous character counter
+                previous_char_count = char_count
+                continue
+
+            if index == text_length - 1:
+                # If end reached append remainder of text to list
+
+                # Start index is previous character counter
+                start_index = previous_char_count
+
+                # End index is current character counter
+                end_index = char_count
+
+                # Append the current buffer to the lines list
+                lines.append(text[start_index:end_index])
+
+                # Synchronize the previous character counter
+                previous_char_count = char_count
+            # Check if the character count is the available space
+            # Remove the previous character count to get the current counter
+            elif (char_count - previous_char_count) == text_available_length + (tags_amount * 3):
+                # Start index is previous character, i.e. where we ended the buffer in the last iteration
+                start_index = previous_char_count
+
+                # End index is the current character count
+                end_index = char_count
+
+                # Track whether to hyphenate or not
+                add_hyphen = False
+
+                # If hyphenation is enabled
+                if hyphenation:
+                    # Index of next char is last index + 1 excluding the tags in the line
+                    next_char_index = end_index + 1 - tags_amount
+
+                    # Next character
+                    next_char = text[next_char_index]
+
+                    # Previous character is last index - 1 excluding the tags in the line
+                    previous_char_index = end_index - 1 - tags_amount
+
+                    # Previous character
+                    prev_char = text[previous_char_index]
+
+                    # Boolean to track, whether to add a hyphen
+                    add_hyphen = False
+
+                    # Check whether the current character is a space
+                    if not character == " ":
+                        # print(f"Previous: {prev_char}\nCurrent: {character}\nNext: {next_char}")
+
+                        # Check if we are in the middle of a word
+                        if not next_char == " " and not prev_char == " ":
+                            # Make add_hyphen true
+                            add_hyphen = True
+
+                            # Add the text to the lines list, with the hyphenation
+                            lines.append(text[start_index:end_index - 1] + "-")
+
+                            # Don't add last char in previous_char_count
+                            previous_char_count = char_count - 1
+                        elif prev_char == " " and not character == " " and not next_char == " ":
+                            # Get last space character
+                            current_char = character
+                            index_difference = 0
+
+                            while not current_char == " ":
+                                index_difference -= 1
+                                current_char = text[end_index + index_difference]
+
+                            # print(f"First Word Char: {current_char} with difference: {index_difference}")
+
+                            # Add the entire word to next buffer
+                            lines.append(text[start_index:end_index + index_difference] + " " * (index_difference * -1))
+
+                            # Don't add the word in the previous_char_count
+                            previous_char_count = char_count + index_difference
+
+                            # Make add hyphen true
+                            add_hyphen = True
+
+                if not add_hyphen:
+                    # Append the buffer to the lines list
+                    lines.append(text[start_index:end_index])
+
+                    # Update the previous character counter
+                    previous_char_count = char_count
+    else:
+        # Else if the text length can be fit into available space
+        # Append the text to the lines list
+        lines.append(text)
+
+    ##########################
+    # ALIGNMENT CALCULATIONS #
+    ##########################
+
+    # Loop through lines list and apply alignment to every line
+    for line_text in lines:
+        text_length = len(line_text) - get_pattern_count(line_text, "<.>", "<..>", "<...>") * 3
+
+        print(f"Original Length: {len(line_text)}\nWithout Color: {text_length}")
+
+        if align == Align.CENTER:
+            # Do center alignment
+            amount_of_space_per_side = int((text_available_length / 2) - text_length / 2)
+
+            print(f"Amount of space per side: {amount_of_space_per_side}")
+            space_left = delimiter_space_symbol * amount_of_space_per_side
+            space_right = delimiter_space_symbol * amount_of_space_per_side
+
+            print(f"{space_left}{line_text}{space_right}")
+
+            lines[lines.index(line_text)] = f"{delimiter_left_color if enable_left_separator_delimiter else ''}" \
+                                            f"{delimiter_left if enable_left_delimiter else ''}" \
+                                            f"{(separator_delimiter_space_symbol * delimiter_space_amount if enable_left_delimiter else '')}" \
+                                            f"{space_left}{line_text}{space_right}" \
+                                            f"{delimiter_space_symbol * delimiter_space_amount if enable_right_delimiter else ''}" \
+                                            f"{delimiter_right_color if enable_right_delimiter else ''}" \
+                                            f"{delimiter_right if enable_right_delimiter else ''}"
+        elif align == Align.LEFT:
+            # Do left alignment
+            pass
+        else:
+            # Do right alignment
+            pass
+
+    for l in lines:
+        print(tag_to_color(l))
 
 
 #########
@@ -647,11 +927,28 @@ if __name__ == "__main__":
     )
 
     testing_text_color_codes = f"<r>This is some red<b> with some blue <g>and some green <w>:D"
+    testing_text = "<r>Hi this is some text for testing the printer, but the problem is I am very bad at thinking of" \
+                   "what to write! So I just wrote what <y>came to my mind and called it the days work" \
+                   ". Now the other " \
+                   "problem is that <g>I need to get the color functioning but I think it would be a " \
+                   "good idea to get " \
+                   "the alignment done <b>first using <c>the lines list so this a some text ke" \
+                   "k blah blue is red" \
+                   " lal lal la ok this sounds cringe af! afd h hsh jfsdh jfsdh sh djk hsdk sdjkh fj" \
+                   "kdh fdsh fjdhsjk " \
+                   "jkshfjk hdjk sdhjk hsdjk hfsdh ksdh fjksdh jkfhasdlfasl fhsdjkl hsd hf j fhsd fhsdk" \
+                   " hfjks hkj hfh" \
+                   "hsd jfk hsd hsjk fhsdjk hfas hfjsdh fwuibfk abjvc asd pihfu bf uiefulasdbfjks auiefw" \
+                   "b xc daf klajf kldjs fds kfjsdkljfklsdj fd fjsdkl fskl jsfd jfsd jf;las jf;lasjflsjd lj s"
 
     # Separator Tests
-
-    print(tag_to_color(testing_text_color_codes))
-    print(give_color_codes_data(tag_to_color(testing_text_color_codes), Color.COLOR_CODE_LENGTH))
-
     # TODO: Write separator tests
+    # TODO: Make color work in print()
     # separate_line()
+    start_time = time.time()
+    pretty_print(testing_text, delimiter_space_amount=10, hyphenation=False)
+    end_time = time.time()
+
+    execution_time = end_time - start_time
+
+    print(f"Execution took {execution_time}s")

@@ -21,3 +21,5 @@ class PrinterPreset:
 
     delimiter_space_amount: int = 0
     delimiter_space_symbol: str = " "
+
+    hyphenation: bool = True
