@@ -879,27 +879,62 @@ def pretty_print(text: str, align: Align = Align.CENTER,
 
         if align == Align.CENTER:
             # Do center alignment
+
+            # Amount of space that should be on both sides
             amount_of_space_per_side = int((text_available_length / 2) - text_length / 2)
 
-            print(f"Amount of space per side: {amount_of_space_per_side}")
+            # Left and right spaces are amount of space needed times the delimiter symbol
             space_left = delimiter_space_symbol * amount_of_space_per_side
             space_right = delimiter_space_symbol * amount_of_space_per_side
 
-            print(f"{space_left}{line_text}{space_right}")
-
+            # Update the list
             lines[lines.index(line_text)] = f"{delimiter_left_color if enable_left_separator_delimiter else ''}" \
                                             f"{delimiter_left if enable_left_delimiter else ''}" \
-                                            f"{(separator_delimiter_space_symbol * delimiter_space_amount if enable_left_delimiter else '')}" \
+                                            f"{(delimiter_space_symbol * delimiter_space_amount if enable_left_delimiter else '')}" \
                                             f"{space_left}{line_text}{space_right}" \
                                             f"{delimiter_space_symbol * delimiter_space_amount if enable_right_delimiter else ''}" \
                                             f"{delimiter_right_color if enable_right_delimiter else ''}" \
                                             f"{delimiter_right if enable_right_delimiter else ''}"
         elif align == Align.LEFT:
             # Do left alignment
-            pass
+
+            # Amount of space on the right is just available space - the text length
+            amount_of_space = int(text_available_length - text_length)
+
+            # Space right is just the amount of space * the symbol
+            space_right = amount_of_space * delimiter_space_symbol
+
+            # There is no space on the left side because it is aligned there
+            space_left = ""
+
+            # Update the list
+            lines[lines.index(line_text)] = f"{delimiter_left_color if enable_left_separator_delimiter else ''}" \
+                                            f"{delimiter_left if enable_left_delimiter else ''}" \
+                                            f"{(delimiter_space_symbol * delimiter_space_amount if enable_left_delimiter else '')}" \
+                                            f"{space_left}{line_text}{space_right}" \
+                                            f"{delimiter_space_symbol * delimiter_space_amount if enable_right_delimiter else ''}" \
+                                            f"{delimiter_right_color if enable_right_delimiter else ''}" \
+                                            f"{delimiter_right if enable_right_delimiter else ''}"
         else:
             # Do right alignment
-            pass
+
+            # Amount of space is just available space - the text length
+            amount_of_space = int(text_available_length - text_length)
+
+            # Space on the left is amount of space * the delimiter symbol
+            space_left = delimiter_space_symbol * amount_of_space
+
+            # There's no space on the right because the text is right aligned
+            space_right = ""
+
+            # Update the list
+            lines[lines.index(line_text)] = f"{delimiter_left_color if enable_left_separator_delimiter else ''}" \
+                                            f"{delimiter_left if enable_left_delimiter else ''}" \
+                                            f"{(delimiter_space_symbol * delimiter_space_amount if enable_left_delimiter else '')}" \
+                                            f"{space_left}{line_text}{space_right}" \
+                                            f"{delimiter_space_symbol * delimiter_space_amount if enable_right_delimiter else ''}" \
+                                            f"{delimiter_right_color if enable_right_delimiter else ''}" \
+                                            f"{delimiter_right if enable_right_delimiter else ''}"
 
     for l in lines:
         print(tag_to_color(l))
@@ -946,7 +981,14 @@ if __name__ == "__main__":
     # TODO: Make color work in print()
     # separate_line()
     start_time = time.time()
-    pretty_print(testing_text, delimiter_space_amount=10, hyphenation=False)
+
+    pretty_print("Hi <r>how are ya? <b>Gb", align=Align.CENTER, delimiter_space_amount=0, hyphenation=False)
+    print("^" * os.get_terminal_size().columns)
+    pretty_print("Hi <r>how are ya? <b>Gb", align=Align.LEFT, delimiter_space_amount=0, hyphenation=False)
+    print("^" * os.get_terminal_size().columns)
+    pretty_print("Hi <r>how are ya? <b>Gb", align=Align.RIGHT, delimiter_space_amount=0, hyphenation=False)
+    print("^" * os.get_terminal_size().columns)
+
     end_time = time.time()
 
     execution_time = end_time - start_time
