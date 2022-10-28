@@ -875,7 +875,7 @@ def pretty_print(text: str, align: Align = Align.CENTER,
     for line_text in lines:
         text_length = len(line_text) - get_pattern_count(line_text, "<.>", "<..>", "<...>") * 3
 
-        print(f"Original Length: {len(line_text)}\nWithout Color: {text_length}")
+        # print(f"Original Length: {len(line_text)}\nWithout Color: {text_length}")
 
         if align == Align.CENTER:
             # Do center alignment
@@ -887,6 +887,19 @@ def pretty_print(text: str, align: Align = Align.CENTER,
             space_left = delimiter_space_symbol * amount_of_space_per_side
             space_right = delimiter_space_symbol * amount_of_space_per_side
 
+            # Check if all the alignment is good, if there are gaps fix them
+
+            # Variable to track the side
+            i = 0
+            while ((len(space_left) + len(space_right)) + text_length) < text_available_length:
+                # Add empty space to right and left until it's good
+                if i == 0:
+                    space_right += delimiter_space_symbol
+                    i = 1
+                elif i == 1:
+                    space_left += delimiter_space_symbol
+                    i = 0
+
             # Update the list
             lines[lines.index(line_text)] = f"{delimiter_left_color if enable_left_separator_delimiter else ''}" \
                                             f"{delimiter_left if enable_left_delimiter else ''}" \
@@ -895,6 +908,8 @@ def pretty_print(text: str, align: Align = Align.CENTER,
                                             f"{delimiter_space_symbol * delimiter_space_amount if enable_right_delimiter else ''}" \
                                             f"{delimiter_right_color if enable_right_delimiter else ''}" \
                                             f"{delimiter_right if enable_right_delimiter else ''}"
+
+            # Check i
         elif align == Align.LEFT:
             # Do left alignment
 
@@ -936,61 +951,71 @@ def pretty_print(text: str, align: Align = Align.CENTER,
                                             f"{delimiter_right_color if enable_right_delimiter else ''}" \
                                             f"{delimiter_right if enable_right_delimiter else ''}"
 
-    for l in lines:
-        print(tag_to_color(l))
+    ############
+    # PRINTING #
+    ############
+
+    # Printing back separator
+    if enable_back_separator:
+        # Print the separator
+        separate_line(delimiter_left=separator_left_delimiter, delimiter_left_color=separator_left_delimiter_color,
+                      enable_left_delimiter=enable_left_separator_delimiter,
+                      delimiter_right=separator_right_delimiter, delimiter_right_color=separator_right_delimiter_color,
+                      enable_right_delimiter=enable_right_separator_delimiter,
+                      delimiter_space_amount=separator_delimiter_space_amount,
+                      delimiter_space_symbol=separator_delimiter_space_symbol,
+                      separator_symbol=separator_symbol, separator_color=separator_color)
+
+    # Loop through the lines list
+    for line in lines:
+        # Print all lines, with tags converted to color codes
+        print(tag_to_color(line))
+
+    # Printing front separator
+    if enable_front_separator:
+        # Print the separator
+        separate_line(delimiter_left=separator_left_delimiter, delimiter_left_color=separator_left_delimiter_color,
+                      enable_left_delimiter=enable_left_separator_delimiter,
+                      delimiter_right=separator_right_delimiter,
+                      delimiter_right_color=separator_right_delimiter_color,
+                      enable_right_delimiter=enable_right_separator_delimiter,
+                      delimiter_space_amount=separator_delimiter_space_amount,
+                      delimiter_space_symbol=separator_delimiter_space_symbol,
+                      separator_symbol=separator_symbol, separator_color=separator_color)
 
 
 #########
 # TESTS #
 #########
 if __name__ == "__main__":
+    ##############################
+    # EXECUTION TIME MEASUREMENT #
+    ##############################
+    start_time = time.time()
+
+    #######################
+    # EXECUTION VARIABLES #
+    #######################
+    lines_printed = 0
+
     #########
     # TESTS #
     #########
 
-    # Variables
-    custom_separator_preset = SeparatorPreset(
-        delimiter_left=">",
-        delimiter_right="<"
-    )
+    pretty_print("Hi this is some text")
+    lines_printed += 1
 
-    custom_global_preset = Preset(
-        separator_preset=SeparatorPreset(
-            delimiter_right="{",
-            delimiter_left="}"
-        )
-    )
+    pretty_print("Hi this is some text", align=Align.LEFT, enable_back_separator=False)
+    lines_printed += 1
 
-    testing_text_color_codes = f"<r>This is some red<b> with some blue <g>and some green <w>:D"
-    testing_text = "<r>Hi this is some text for testing the printer, but the problem is I am very bad at thinking of" \
-                   "what to write! So I just wrote what <y>came to my mind and called it the days work" \
-                   ". Now the other " \
-                   "problem is that <g>I need to get the color functioning but I think it would be a " \
-                   "good idea to get " \
-                   "the alignment done <b>first using <c>the lines list so this a some text ke" \
-                   "k blah blue is red" \
-                   " lal lal la ok this sounds cringe af! afd h hsh jfsdh jfsdh sh djk hsdk sdjkh fj" \
-                   "kdh fdsh fjdhsjk " \
-                   "jkshfjk hdjk sdhjk hsdjk hfsdh ksdh fjksdh jkfhasdlfasl fhsdjkl hsd hf j fhsd fhsdk" \
-                   " hfjks hkj hfh" \
-                   "hsd jfk hsd hsjk fhsdjk hfas hfjsdh fwuibfk abjvc asd pihfu bf uiefulasdbfjks auiefw" \
-                   "b xc daf klajf kldjs fds kfjsdkljfklsdj fd fjsdkl fskl jsfd jfsd jf;las jf;lasjflsjd lj s"
+    pretty_print("Hi this is some text", align=Align.RIGHT, enable_back_separator=False)
+    lines_printed += 1
 
-    # Separator Tests
-    # TODO: Write separator tests
-    # TODO: Make color work in print()
-    # separate_line()
-    start_time = time.time()
-
-    pretty_print("Hi <r>how are ya? <b>Gb", align=Align.CENTER, delimiter_space_amount=0, hyphenation=False)
-    print("^" * os.get_terminal_size().columns)
-    pretty_print("Hi <r>how are ya? <b>Gb", align=Align.LEFT, delimiter_space_amount=0, hyphenation=False)
-    print("^" * os.get_terminal_size().columns)
-    pretty_print("Hi <r>how are ya? <b>Gb", align=Align.RIGHT, delimiter_space_amount=0, hyphenation=False)
-    print("^" * os.get_terminal_size().columns)
-
+    ##############################
+    # EXECUTION TIME MEASUREMENT #
+    ##############################
     end_time = time.time()
 
     execution_time = end_time - start_time
 
-    print(f"Execution took {execution_time}s")
+    print(f"Execution took {execution_time}s with {lines_printed} {'lines' if lines_printed > 1 else 'line'} printed!")
