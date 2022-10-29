@@ -346,6 +346,9 @@ def pretty_print(text: str, align: Align = Align.CENTER,
 
             separator_delimiter_space_symbol = separator_preset.delimiter_space_symbol
             separator_delimiter_space_amount = separator_preset.delimiter_space_amount
+
+            separator_symbol = separator_preset.separator_symbol
+            separator_color = separator_preset.separator_color
         elif type(separator_preset) is Preset:
             # Assign variables to respective separator preset values
             separator_left_delimiter = separator_preset.separator_preset.delimiter_left
@@ -356,6 +359,9 @@ def pretty_print(text: str, align: Align = Align.CENTER,
 
             separator_delimiter_space_symbol = separator_preset.separator_preset.delimiter_space_symbol
             separator_delimiter_space_amount = separator_preset.separator_preset.delimiter_space_amount
+
+            separator_symbol = separator_preset.separator_preset.separator_symbol
+            separator_color = separator_preset.separator_preset.separator_color
         else:
             raise TypeError(f"Expected types: SeparatorPreset or Preset | Found: {type(separator_preset).__name__}")
 
