@@ -2,7 +2,7 @@
 # IMPORTING LIBRARIES #
 #######################
 from dataclasses import dataclass
-from .separator_preset import SeparatorPreset
+from src.fancyprint.ftypes.separator_preset import SeparatorPreset
 from .printer_preset import PrinterPreset
 
 

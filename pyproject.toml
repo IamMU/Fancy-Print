@@ -4,7 +4,7 @@ build-backend = "flit_core.buildapi"
 
 [project]
 name = "fancyprint"
-version = "0.1.1"
+version = "0.1.2"
 authors = [{ name = "MU", email = "iammu@duck.com" }]
 description = "A aesthetic replacement to print()"
 readme = "README.md"
