@@ -165,10 +165,7 @@ def separate_line(preset: SeparatorPreset | Preset = None,
     #############
 
     # Getting terminal width (in chars) | If testing mode, using custom width
-    if not test_mode:
-        terminal_width = os.get_terminal_size().columns
-    elif test_mode:
-        terminal_width = testing_terminal_width
+    terminal_width = os.get_terminal_size().columns if not test_mode else testing_terminal_width
 
     # Make variables for the different areas of the separator line
     left_side = str()
