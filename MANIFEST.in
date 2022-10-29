@@ -1,0 +1,4 @@
+include *.md
+include LICENSE
+recursive-include Images *.png
+recursive-include tests *.py
