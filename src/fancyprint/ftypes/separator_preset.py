@@ -2,7 +2,7 @@
 # IMPORTING LIBRARIES #
 #######################
 from dataclasses import dataclass
-from src.fancyprint.ftypes.color import Color
+from .color import Color
 
 
 ################

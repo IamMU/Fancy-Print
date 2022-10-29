@@ -4,7 +4,7 @@
 import os
 import time
 import re
-from ftypes import Color, Preset, SeparatorPreset, PrinterPreset, Align
+from fancyprint.ftypes import Color, Preset, SeparatorPreset, PrinterPreset, Align
 
 ###########
 # CLASSES #
