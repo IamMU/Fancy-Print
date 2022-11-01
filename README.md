@@ -3,7 +3,7 @@
 
 <hr>
 
-<h6 align="center"><b>Development Status:</b> Early Development/Usable</h6>
+<h6 align="center"><b>Development Status:</b> Early Development</h6>
 <p align="center">
   <a href="https://pypi.org/project/fancyprint/">
 	<img src="https://img.shields.io/pypi/v/fancyprint?color=blue&label=PyPI&logo=python&logoColor=white&style=for-the-badge" alt="PyPI">
