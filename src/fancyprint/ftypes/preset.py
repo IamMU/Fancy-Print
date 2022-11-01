@@ -4,6 +4,7 @@
 from dataclasses import dataclass
 from .separator_preset import SeparatorPreset
 from .printer_preset import PrinterPreset
+from .input_preset import InputPreset
 
 
 ################
@@ -17,3 +18,6 @@ class Preset:
 
     # The print preset
     printer_preset: PrinterPreset = PrinterPreset()
+
+    # The input preset
+    input_preset: InputPreset = InputPreset()

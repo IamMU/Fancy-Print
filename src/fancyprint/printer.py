@@ -4,7 +4,8 @@
 import os
 import time
 import re
-from fancyprint.ftypes import Color, Preset, SeparatorPreset, PrinterPreset, Align
+from turtle import pos
+from fancyprint.ftypes import Color, Preset, SeparatorPreset, PrinterPreset, InputPreset, Align, input_preset
 
 ###########
 # CLASSES #
@@ -98,71 +99,115 @@ def colored_to_uncolored(text: str, tags: bool = True) -> str:
     return text
 
 
-def separate_line(preset: SeparatorPreset | Preset = None,
-                  delimiter_left: str = "|", delimiter_left_color: Color = Color.CYAN,
-                  enable_left_delimiter: bool = True,
-                  delimiter_right: str = "|", delimiter_right_color: Color = Color.CYAN,
-                  enable_right_delimiter: bool = True,
-                  delimiter_space_amount: int = 0, delimiter_space_symbol: str = " ",
-                  separator_symbol: str = "-", separator_color: Color = Color.MAGENTA,
-                  enable_separator: bool = True, test_mode: bool = False, testing_terminal_width: int = 100) -> None:
+def separate_line(position: str = "front", preset: SeparatorPreset | Preset = None,
+                  back_delimiter_left: str = "|", back_delimiter_left_color: Color = Color.CYAN,
+                  back_enable_left_delimiter: bool = True,
+                  back_delimiter_right: str = "|", back_delimiter_right_color: Color = Color.CYAN,
+                  back_enable_right_delimiter: bool = True,
+                  back_delimiter_space_amount: int = 0, back_delimiter_space_symbol: str = " ",
+                  back_separator_symbol: str = "-", back_separator_color: Color = Color.MAGENTA,
+                  enable_back_separator: bool = True,
+                  front_delimiter_left: str = "|", front_delimiter_left_color: Color = Color.CYAN,
+                  front_enable_left_delimiter: bool = True,
+                  front_delimiter_right: str = "|", front_delimiter_right_color: Color = Color.CYAN,
+                  front_enable_right_delimiter: bool = True,
+                  front_delimiter_space_amount: int = 0, front_delimiter_space_symbol: str = " ",
+                  front_separator_symbol: str = "-", front_separator_color: Color = Color.MAGENTA,
+                  enable_front_separator: bool = True,
+                  test_mode: bool = False, testing_terminal_width: int = 100) -> None:
     """Prints a separator line
 
     Parameters:
+        position: The position of the separator (front/back), which affects the styles
         preset: Use a preset for customizations
-        delimiter_left: Symbol for the left delimiter (Default: "|")
-        delimiter_left_color: Color for the left delimiter (Default: Color.CYAN)
-        enable_left_delimiter: Whether left delimiter is to be printed (Default: True)
-        delimiter_right: Symbol for the right delimiter (Default: "|")
-        delimiter_right_color: Color for the right delimiter (Default: Color.CYAN)
-        enable_right_delimiter: Whether right delimiter is to be printed (Default: True)
-        delimiter_space_symbol: Symbol for the delimiter spacing (Default: " ")
-        delimiter_space_amount: Amount of delimiter space to be applied before separator symbol start/end
+
+        back_delimiter_left: Symbol for the left delimiter (Default: "|")
+        back_delimiter_left_color: Color for the left delimiter (Default: Color.CYAN)
+        back_enable_left_delimiter: Whether left delimiter is to be printed (Default: True)
+        back_delimiter_right: Symbol for the right delimiter (Default: "|")
+        back_delimiter_right_color: Color for the right delimiter (Default: Color.CYAN)
+        back_enable_right_delimiter: Whether right delimiter is to be printed (Default: True)
+        back_delimiter_space_symbol: Symbol for the delimiter spacing (Default: " ")
+        back_delimiter_space_amount: Amount of delimiter space to be applied before separator symbol start/end
          (Default: 0)
-        separator_symbol: Symbol for the separator (middle) (Default: "-")
-        separator_color: Color for the separator (middle) (Default: Color.MAGENTA)
-        enable_separator: Whether to enable the separator symbol, otherwise it will be " " (Default: True)
+        back_separator_symbol: Symbol for the separator (middle) (Default: "-")
+        back_separator_color: Color for the separator (middle) (Default: Color.MAGENTA)
+        enable_back_separator: Whether to enable the separator symbol, otherwise it will be " " (Default: True)
+
+        front_delimiter_left: Symbol for the left delimiter (Default: "|")
+        front_delimiter_left_color: Color for the left delimiter (Default: Color.CYAN)
+        front_enable_left_delimiter: Whether left delimiter is to be printed (Default: True)
+        front_delimiter_right: Symbol for the right delimiter (Default: "|")
+        front_delimiter_right_color: Color for the right delimiter (Default: Color.CYAN)
+        front_enable_right_delimiter: Whether right delimiter is to be printed (Default: True)
+        front_delimiter_space_symbol: Symbol for the delimiter spacing (Default: " ")
+        front_delimiter_space_amount: Amount of delimiter space to be applied before separator symbol start/end
+         (Default: 0)
+        front_separator_symbol: Symbol for the separator (middle) (Default: "-")
+        front_separator_color: Color for the separator (middle) (Default: Color.MAGENTA)
+        enable_front_separator: Whether to enable the separator symbol, otherwise it will be " " (Default: True)
+
         test_mode: Whether to enable test mode (For developers only) (Default: False)
         testing_terminal_width: Artificial terminal width (For developers only) (Default: 100)
     """
+    # Make position lower case
+    position = position.lower()
+
     # Check if preset is being used or not
     if preset is None:
-        # Do nothing, all variables will be same
-        pass
+        # Set static variables
+        delimiter_left = back_delimiter_left if position == "back" else front_delimiter_left
+        delimiter_left_color = back_delimiter_left_color if position == "back" else front_delimiter_left_color
+
+        delimiter_right = back_delimiter_right if position == "back" else front_delimiter_right
+        delimiter_right_color = back_delimiter_right_color if position == "back" else front_delimiter_right_color
+
+        separator_symbol = back_separator_symbol if position == "back" else front_separator_symbol
+        separator_color = back_separator_color if position == "back" else front_separator_color
+
+        delimiter_space_amount = back_delimiter_space_amount if position == "back" else front_delimiter_space_amount
+        delimiter_space_symbol = back_delimiter_space_symbol if position == "back" else front_delimiter_space_symbol
     else:
         # If some preset is being used, check if it is global or not, else raise a type error
         if type(preset) == SeparatorPreset:
             # Assign all variables to respective preset values
-            delimiter_left = preset.delimiter_left
-            delimiter_left_color = preset.delimiter_left_color
+            delimiter_left = preset.back_delimiter_left if position == "back" else preset.front_delimiter_left
+            delimiter_left_color = preset.back_delimiter_left_color if position == "back" else preset.front_delimiter_left_color
 
-            delimiter_right = preset.delimiter_right
-            delimiter_right_color = preset.delimiter_right_color
+            delimiter_right = preset.back_delimiter_right if position == "back" else preset.front_delimiter_right
+            delimiter_right_color = preset.back_delimiter_right_color if position == "back" else preset.front_delimiter_right_color
 
-            separator_symbol = preset.separator_symbol
-            separator_color = preset.separator_color
+            separator_symbol = preset.back_separator_symbol if position == "back" else preset.front_separator_symbol
+            separator_color = preset.back_separator_color if position == 'back' else preset.front_separator_color
 
-            delimiter_space_amount = preset.delimiter_space_amount
-            delimiter_space_symbol = preset.delimiter_space_symbol
+            delimiter_space_amount = preset.back_delimiter_space_amount if position == "back" else preset.front_delimiter_space_amount
+            delimiter_space_symbol = preset.back_delimiter_space_symbol if position == "front" else preset.front_delimiter_space_symbol
         elif type(preset) == Preset:
             # Assign all separator-valid values to respective variables
-            delimiter_left = preset.separator_preset.delimiter_left
-            delimiter_left_color = preset.separator_preset.delimiter_left_color
+            if type(preset) == SeparatorPreset:
+                # Assign all variables to respective preset values
+                delimiter_left = preset.separator_preset.back_delimiter_left if position == "back" else preset.separator_preset.front_delimiter_left
+                delimiter_left_color = preset.separator_preset.back_delimiter_left_color if position == "back" else preset.separator_preset.front_delimiter_left_color
 
-            delimiter_right = preset.separator_preset.delimiter_right
-            delimiter_right_color = preset.separator_preset.delimiter_right_color
+                delimiter_right = preset.separator_preset.back_delimiter_right if position == "back" else preset.separator_preset.front_delimiter_right
+                delimiter_right_color = preset.separator_preset.back_delimiter_right_color if position == "back" else preset.separator_preset.front_delimiter_right_color
 
-            separator_symbol = preset.separator_preset.separator_symbol
-            separator_color = preset.separator_preset.separator_color
+                separator_symbol = preset.separator_preset.back_separator_symbol if position == "back" else preset.separator_preset.front_separator_symbol
+                separator_color = preset.separator_preset.back_separator_color if position == 'back' else preset.separator_preset.front_separator_color
 
-            delimiter_space_amount = preset.separator_preset.delimiter_space_amount
-            delimiter_space_symbol = preset.separator_preset.delimiter_space_symbol
+                delimiter_space_amount = preset.separator_preset.back_delimiter_space_amount if position == "back" else preset.front_delimiter_space_amount
+                delimiter_space_symbol = preset.separator_preset.back_delimiter_space_symbol if position == "front" else preset.front_delimiter_space_symbol
         else:
             raise TypeError(f"Expected types: SeperatorPreset or Preset | Found: {type(preset).__name__}")
 
     #############
     # Variables #
     #############
+
+    # Set dynamic vars to statics ones(i.e set one var for back_var and front_var
+    enable_separator = enable_back_separator if position == "back" else enable_front_separator
+    enable_left_delimiter = back_enable_left_delimiter if position == "back" else front_enable_left_delimiter
+    enable_right_delimiter = back_enable_right_delimiter if position == "back" else front_enable_right_delimiter
 
     # Getting terminal width (in chars) | If testing mode, using custom width
     terminal_width = os.get_terminal_size().columns if not test_mode else testing_terminal_width
@@ -249,15 +294,25 @@ def pretty_print(text: str, align: Align = Align.CENTER,
                  delimiter_space_amount: int = 0, delimiter_space_symbol: str = " ",
                  delimiter_right: str = "|", delimiter_right_color: Color = Color.CYAN,
                  enable_right_delimiter: bool = True,
-                 separator_left_delimiter: str = "|", separator_left_delimiter_color: Color = Color.CYAN,
-                 enable_left_separator_delimiter: bool = True,
-                 separator_right_delimiter: str = "|", separator_right_delimiter_color: Color = Color.CYAN,
-                 enable_right_separator_delimiter: bool = True,
-                 separator_symbol: str = "-", separator_color: Color = Color.MAGENTA,
-                 enable_separator_symbol: bool = True,
-                 separator_delimiter_space_amount: int = 0, separator_delimiter_space_symbol: str = " ",
-                 enable_back_separator: bool = True, enable_front_separator: bool = True,
                  hyphenation: bool = True,
+
+                 back_separator_left_delimiter: str = "|", back_separator_left_delimiter_color: Color = Color.CYAN,
+                 back_enable_left_separator_delimiter: bool = True,
+                 back_separator_right_delimiter: str = "|", back_separator_right_delimiter_color: Color = Color.CYAN,
+                 back_enable_right_separator_delimiter: bool = True,
+                 back_separator_symbol: str = "-", back_separator_color: Color = Color.MAGENTA,
+                 back_enable_separator_symbol: bool = True,
+                 back_separator_delimiter_space_amount: int = 0, back_separator_delimiter_space_symbol: str = " ",
+
+                 front_separator_left_delimiter: str = "|", front_separator_left_delimiter_color: Color = Color.CYAN,
+                 front_enable_left_separator_delimiter: bool = True,
+                 front_separator_right_delimiter: str = "|", front_separator_right_delimiter_color: Color = Color.CYAN,
+                 front_enable_right_separator_delimiter: bool = True,
+                 front_separator_symbol: str = "-", front_separator_color: Color = Color.MAGENTA,
+                 front_enable_separator_symbol: bool = True,
+                 front_separator_delimiter_space_amount: int = 0, front_separator_delimiter_space_symbol: str = " ",
+
+                 enable_back_separator: bool = True, enable_front_separator: bool = True,
                  test_mode: bool = False, testing_terminal_width: int = 100) -> None:
     """Prints text to console/terminal emulator.
 
@@ -274,22 +329,41 @@ def pretty_print(text: str, align: Align = Align.CENTER,
      enable_right_delimiter: Whether to print the right delimiter (Default: True)
      delimiter_space_amount: Amount of delimiter space to print on both sides (Default: 0)
      delimiter_space_symbol: Symbol for the delimiter space area (Default: " ")
-     separator_left_delimiter: Symbol for the left delimiter of both separators (Front/Back) (Default: "|")
-     separator_left_delimiter_color: Color for the left delimiter of both separators (Front/Back)
+
+     back_separator_left_delimiter: Symbol for the left delimiter of both separators (Front/Back) (Default: "|")
+     back_separator_left_delimiter_color: Color for the left delimiter of both separators (Front/Back)
       (Default: Color.CYAN)
-     enable_left_separator_delimiter: Whether to enable left delimiter of both separators (Front/Back)
+     back_enable_left_separator_delimiter: Whether to enable left delimiter of both separators (Front/Back)
       (Default: True)
-     separator_right_delimiter: Symbol for the right delimiter of both separators (Front/Back) (Default: "|")
-     separator_right_delimiter_color: Color for the right delimiter of both separators (Front/Back)
+     back_separator_right_delimiter: Symbol for the right delimiter of both separators (Front/Back) (Default: "|")
+     back_separator_right_delimiter_color: Color for the right delimiter of both separators (Front/Back)
       (Default: Color.CYAN)
-     enable_right_separator_delimiter: Whether to enable the right delimiter both separators (Front/Back)
+     back_enable_right_separator_delimiter: Whether to enable the right delimiter both separators (Front/Back)
       (Default: True)
-     separator_symbol: Symbol for both separators (Front/Back) (Default: "-")
-     separator_color: Color for the separator symbol (Default: Color.MAGENTA)
-     enable_separator_symbol: Whether to enable separator symbol (Default: True) | If False " " will be printed instead
-     separator_delimiter_space_symbol: Symbol for the delimiter space in both separators (Front/Back)
+     back_separator_symbol: Symbol for both separators (Front/Back) (Default: "-")
+     back_separator_color: Color for the separator symbol (Default: Color.MAGENTA)
+     back_enable_separator_symbol: Whether to enable separator symbol (Default: True) | If False " " will be printed instead
+     back_separator_delimiter_space_symbol: Symbol for the delimiter space in both separators (Front/Back)
       (Default: " ")
-     separator_delimiter_space_amount: Amount of delimiter space for both separators (Front/Back) (Default: 0)
+     back_separator_delimiter_space_amount: Amount of delimiter space for both separators (Front/Back) (Default: 0)
+
+     front_separator_left_delimiter: Symbol for the left delimiter of both separators (Front/Back) (Default: "|")
+     front_separator_left_delimiter_color: Color for the left delimiter of both separators (Front/Back)
+      (Default: Color.CYAN)
+     front_enable_left_separator_delimiter: Whether to enable left delimiter of both separators (Front/Back)
+      (Default: True)
+     front_separator_right_delimiter: Symbol for the right delimiter of both separators (Front/Back) (Default: "|")
+     front_separator_right_delimiter_color: Color for the right delimiter of both separators (Front/Back)
+      (Default: Color.CYAN)
+     front_enable_right_separator_delimiter: Whether to enable the right delimiter both separators (Front/Back)
+      (Default: True)
+     front_separator_symbol: Symbol for both separators (Front/Back) (Default: "-")
+     front_separator_color: Color for the separator symbol (Default: Color.MAGENTA)
+     front_enable_separator_symbol: Whether to enable separator symbol (Default: True) | If False " " will be printed instead
+     front_separator_delimiter_space_symbol: Symbol for the delimiter space in both separators (Front/Back)
+      (Default: " ")
+     front_separator_delimiter_space_amount: Amount of delimiter space for both separators (Front/Back) (Default: 0)
+
      enable_back_separator: Whether to print the back separator (Default: True)
      enable_front_separator: Whether to print the front separator (Default: True)
      test_mode: Whether to use artificial values (for developers only) (Default: False)
@@ -338,24 +412,60 @@ def pretty_print(text: str, align: Align = Align.CENTER,
         # If preset is being used check if it's global or not, else raise TypeError
         if type(separator_preset) is SeparatorPreset:
             # Assign variables to respective values
-            separator_left_delimiter = separator_preset.delimiter_left
-            separator_left_delimiter_color = separator_preset.delimiter_left_color
 
-            separator_right_delimiter = separator_preset.delimiter_right
-            separator_right_delimiter_color = separator_preset.delimiter_right_color
+            # Back separator
+            back_separator_left_delimiter = separator_preset.back_delimiter_left
+            back_separator_left_delimiter_color = separator_preset.back_delimiter_left_color
 
-            separator_delimiter_space_symbol = separator_preset.delimiter_space_symbol
-            separator_delimiter_space_amount = separator_preset.delimiter_space_amount
+            back_separator_right_delimiter = separator_preset.back_delimiter_right
+            back_separator_right_delimiter_color = separator_preset.back_delimiter_right_color
+
+            back_separator_delimiter_space_symbol = separator_preset.back_delimiter_space_symbol
+            back_separator_delimiter_space_amount = separator_preset.back_delimiter_space_amount
+
+            back_separator_symbol = separator_preset.back_separator_symbol
+            back_separator_color = separator_preset.back_separator_color
+
+            # Front separator
+            front_separator_left_delimiter = separator_preset.front_delimiter_left
+            front_separator_left_delimiter_color = separator_preset.front_delimiter_left_color
+
+            front_separator_right_delimiter = separator_preset.front_delimiter_right
+            front_separator_right_delimiter_color = separator_preset.front_delimiter_right_color
+
+            front_separator_delimiter_space_symbol = separator_preset.front_delimiter_space_symbol
+            front_separator_delimiter_space_amount = separator_preset.front_delimiter_space_amount
+
+            front_separator_symbol = separator_preset.front_separator_symbol
+            front_separator_color = separator_preset.front_separator_color
         elif type(separator_preset) is Preset:
-            # Assign variables to respective separator preset values
-            separator_left_delimiter = separator_preset.separator_preset.delimiter_left
-            separator_left_delimiter_color = separator_preset.separator_preset.delimiter_left_color
+            # Assign variables to respective values
 
-            separator_right_delimiter = separator_preset.separator_preset.delimiter_right
-            separator_right_delimiter_color = separator_preset.separator_preset.delimiter_right_color
+            # Back separator
+            back_separator_left_delimiter = separator_preset.separator_preset.back_delimiter_left
+            back_separator_left_delimiter_color = separator_preset.separator_preset.back_delimiter_left_color
 
-            separator_delimiter_space_symbol = separator_preset.separator_preset.delimiter_space_symbol
-            separator_delimiter_space_amount = separator_preset.separator_preset.delimiter_space_amount
+            back_separator_right_delimiter = separator_preset.separator_preset.back_delimiter_right
+            back_separator_right_delimiter_color = separator_preset.separator_preset.back_delimiter_right_color
+
+            back_separator_delimiter_space_symbol = separator_preset.separator_preset.back_delimiter_space_symbol
+            back_separator_delimiter_space_amount = separator_preset.separator_preset.back_delimiter_space_amount
+
+            back_separator_symbol = separator_preset.separator_preset.back_separator_symbol
+            back_separator_color = separator_preset.separator_preset.back_separator_color
+
+            # Front separator
+            front_separator_left_delimiter = separator_preset.separator_preset.front_delimiter_left
+            front_separator_left_delimiter_color = separator_preset.separator_preset.front_delimiter_left_color
+
+            front_separator_right_delimiter = separator_preset.separator_preset.front_delimiter_right
+            front_separator_right_delimiter_color = separator_preset.separator_preset.front_delimiter_right_color
+
+            front_separator_delimiter_space_symbol = separator_preset.separator_preset.front_delimiter_space_symbol
+            front_separator_delimiter_space_amount = separator_preset.separator_preset.front_delimiter_space_amount
+
+            front_separator_symbol = separator_preset.separator_preset.front_separator_symbol
+            front_separator_color = separator_preset.separator_preset.front_separator_color
         else:
             raise TypeError(f"Expected types: SeparatorPreset or Preset | Found: {type(separator_preset).__name__}")
 
@@ -538,7 +648,7 @@ def pretty_print(text: str, align: Align = Align.CENTER,
                     i = 0
 
             # Update the list
-            lines[lines.index(line_text)] = f"{delimiter_left_color if enable_left_separator_delimiter else ''}" \
+            lines[lines.index(line_text)] = f"{delimiter_left_color if enable_left_delimiter else ''}" \
                                             f"{delimiter_left if enable_left_delimiter else ''}" \
                                             f"{(delimiter_space_symbol * delimiter_space_amount if enable_left_delimiter else '')}" \
                                             f"{space_left}{Color.WHITE}{line_text}{space_right}" \
@@ -560,7 +670,7 @@ def pretty_print(text: str, align: Align = Align.CENTER,
             space_left = ""
 
             # Update the list
-            lines[lines.index(line_text)] = f"{delimiter_left_color if enable_left_separator_delimiter else ''}" \
+            lines[lines.index(line_text)] = f"{delimiter_left_color if enable_left_delimiter else ''}" \
                                             f"{delimiter_left if enable_left_delimiter else ''}" \
                                             f"{(delimiter_space_symbol * delimiter_space_amount if enable_left_delimiter else '')}" \
                                             f"{space_left}{Color.WHITE}{line_text}{space_right}" \
@@ -580,7 +690,7 @@ def pretty_print(text: str, align: Align = Align.CENTER,
             space_right = ""
 
             # Update the list
-            lines[lines.index(line_text)] = f"{delimiter_left_color if enable_left_separator_delimiter else ''}" \
+            lines[lines.index(line_text)] = f"{delimiter_left_color if enable_left_delimiter else ''}" \
                                             f"{delimiter_left if enable_left_delimiter else ''}" \
                                             f"{(delimiter_space_symbol * delimiter_space_amount if enable_left_delimiter else '')}" \
                                             f"{space_left}{Color.WHITE}{line_text}{space_right}" \
@@ -595,13 +705,32 @@ def pretty_print(text: str, align: Align = Align.CENTER,
     # Printing back separator
     if enable_back_separator:
         # Print the separator
-        separate_line(delimiter_left=separator_left_delimiter, delimiter_left_color=separator_left_delimiter_color,
-                      enable_left_delimiter=enable_left_separator_delimiter,
-                      delimiter_right=separator_right_delimiter, delimiter_right_color=separator_right_delimiter_color,
-                      enable_right_delimiter=enable_right_separator_delimiter,
-                      delimiter_space_amount=separator_delimiter_space_amount,
-                      delimiter_space_symbol=separator_delimiter_space_symbol,
-                      separator_symbol=separator_symbol if enable_separator_symbol else ' ', separator_color=separator_color)
+        separate_line(position="back",
+                      back_delimiter_left=back_separator_left_delimiter,
+                      back_delimiter_left_color=back_separator_left_delimiter_color,
+                      back_enable_left_delimiter=back_enable_left_separator_delimiter,
+                      back_delimiter_right=back_separator_right_delimiter,
+                      back_delimiter_right_color=back_separator_right_delimiter_color,
+                      back_enable_right_delimiter=back_enable_right_separator_delimiter,
+                      back_delimiter_space_amount=back_separator_delimiter_space_amount,
+                      back_delimiter_space_symbol=back_separator_symbol,
+                      back_separator_symbol=back_separator_symbol,
+                      back_separator_color=back_separator_color,
+
+                      front_delimiter_left=front_separator_left_delimiter,
+                      front_delimiter_left_color=front_separator_left_delimiter_color,
+                      front_enable_left_delimiter=front_enable_left_separator_delimiter,
+                      front_delimiter_right=front_separator_right_delimiter,
+                      front_delimiter_right_color=front_separator_right_delimiter_color,
+                      front_enable_right_delimiter=front_enable_right_separator_delimiter,
+                      front_delimiter_space_amount=front_separator_delimiter_space_amount,
+                      front_delimiter_space_symbol=front_separator_symbol,
+                      front_separator_symbol=front_separator_symbol,
+                      front_separator_color=front_separator_color,
+
+                      test_mode=True if test_mode == True else False,
+                      testing_terminal_width=testing_terminal_width
+                      )
 
     # Loop through the lines list
     for line in lines:
@@ -611,14 +740,75 @@ def pretty_print(text: str, align: Align = Align.CENTER,
     # Printing front separator
     if enable_front_separator:
         # Print the separator
-        separate_line(delimiter_left=separator_left_delimiter, delimiter_left_color=separator_left_delimiter_color,
-                      enable_left_delimiter=enable_left_separator_delimiter,
-                      delimiter_right=separator_right_delimiter,
-                      delimiter_right_color=separator_right_delimiter_color,
-                      enable_right_delimiter=enable_right_separator_delimiter,
-                      delimiter_space_amount=separator_delimiter_space_amount,
-                      delimiter_space_symbol=separator_delimiter_space_symbol,
-                      separator_symbol=separator_symbol if enable_separator_symbol else " ", separator_color=separator_color)
+        separate_line(position="front",
+                      back_delimiter_left=back_separator_left_delimiter,
+                      back_delimiter_left_color=back_separator_left_delimiter_color,
+                      back_enable_left_delimiter=back_enable_left_separator_delimiter,
+                      back_delimiter_right=back_separator_right_delimiter,
+                      back_delimiter_right_color=back_separator_right_delimiter_color,
+                      back_enable_right_delimiter=back_enable_right_separator_delimiter,
+                      back_delimiter_space_amount=back_separator_delimiter_space_amount,
+                      back_delimiter_space_symbol=back_separator_symbol,
+                      back_separator_symbol=back_separator_symbol,
+                      back_separator_color=back_separator_color,
+
+                      front_delimiter_left=front_separator_left_delimiter,
+                      front_delimiter_left_color=front_separator_left_delimiter_color,
+                      front_enable_left_delimiter=front_enable_left_separator_delimiter,
+                      front_delimiter_right=front_separator_right_delimiter,
+                      front_delimiter_right_color=front_separator_right_delimiter_color,
+                      front_enable_right_delimiter=front_enable_right_separator_delimiter,
+                      front_delimiter_space_amount=front_separator_delimiter_space_amount,
+                      front_delimiter_space_symbol=front_separator_symbol,
+                      front_separator_symbol=front_separator_symbol,
+                      front_separator_color=front_separator_color,
+
+                      test_mode=True if test_mode == True else False,
+                      testing_terminal_width=testing_terminal_width,
+                      )
+
+
+def pretty_input(prompt: str = "", preset: Preset | InputPreset = InputPreset(),
+                 enable_back_separator: bool = True, enable_front_separator: bool = True) -> str:
+    """Gets user input with style
+    Parameters:
+        preset -- Preset to use for customizations
+    """
+    ######################
+    # CHECK PRESET TYPES #
+    ######################
+    if type(preset) is not None:
+        if not type(preset) is Preset and not type(preset) is InputPreset:
+            raise TypeError(f"Expected types: Preset or InputPreset | Found: {type(preset)}")
+        
+    #############
+    # VARIABLES #
+    #############
+    user_input = str()
+    
+    #################
+    # GETTING INPUT #
+    #################
+
+    # Print back separator
+    if enable_back_separator:
+        # Position is back and give the back preset
+        separate_line(position="back", preset=preset.separator_preset)
+
+    # Print the input prompt
+    user_input = input(f"{preset.delimiter_left_color}{preset.delimiter_left}{preset.delimiter_left_prompt_separator_left_color}{preset.delimiter_left_prompt_separator_left}{prompt}"\
+          f"{preset.delimiter_left_prompt_separator_right_color}{preset.delimiter_left_prompt_separator_right}{preset.input_separator_left_color}{preset.input_separator_left}"\
+          f"{preset.input_text_color}")
+
+    # Print front separator
+    if enable_front_separator:
+        # Position is front and give the front preset
+        separate_line(position="front", preset=preset.separator_preset)
+
+    #############
+    # RETURNING #
+    #############
+    return user_input
 
 
 #########
