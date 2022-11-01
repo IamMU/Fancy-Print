@@ -1,62 +1,41 @@
-##############################################
-# THIS FILE IS FOR MAKING PRACTICAL EXAMPLES #
-##############################################
-
-#######################
-# IMPORTING LIBRARIES #
-#######################
-from fancyprint import pretty_print, separate_line
-from fancyprint.ftypes import PrinterPreset, SeparatorPreset, Color
-
-#############
-# MAIN MENU #
-#############
-def main_menu(title: str, options: list, errors: list):
-    # Local variables
-    user_input = str()
-    options = [(i + 1, v) for i, v in enumerate(options)]
-
-    # Main Loop
-    while not user_input == "q":
-        # Print the title
-        pretty_print(title)
-
-        # Print the options
-        for index, option in options:
-            pretty_print(f"{index}) {option}", enable_back_separator=False, enable_front_separator=False)
-
-        # Print a separator
-        separate_line()
-
-        # Print the errors
-        for error in errors:
-            pretty_print(f"<r>{error}", enable_back_separator=False)
-
-        # Get input
-        user_input = input("|-> ").lower()
+from codecs import unicode_escape_decode
+import enum
+from fancyprint.presets.unicode import Box
+from fancyprint import *
 
 
-########################
-# RUNNING THE EXAMPLES #
-########################
-if __name__ == "__main__":
-    printer_preset = PrinterPreset(
-        delimiter_left="│",
-        delimiter_right="│",
-        delimiter_right_color=Color.WHITE,
-        delimiter_left_color=Color.WHITE
-    )
+options = ["Start", "Options", "Credits", "Exit"]
+title = "Use Case#1: Main Menu"
+title_color = "<w>"
 
-    separator_preset = SeparatorPreset(
-        delimiter_right="╮",
-        delimiter_right_color=Color.WHITE,
-        delimiter_left_color=Color.WHITE,
-        delimiter_left="╭",
-        separator_symbol="─",
-        separator_color=Color.WHITE,
-    )
+exit_options = ["4", "exit", "q", "quit"]
+errors = []
+preset = Box.Hard
 
-    pretty_print("Hi, this is some sample text", preset=printer_preset, separator_preset=separator_preset)
+user_input = str()
 
-    for i in range(256):
-        print(f"\033[38;5;{i}m0", end="")
+while not user_input in exit_options:
+    # Clear the screen
+    os.system("clear")
+    
+    # Print the title
+    pretty_print(title_color + title, preset=preset.printer_preset, separator_preset=preset.separator_preset)
+
+    # Print options
+    for index, value in enumerate(options):
+        pretty_print(f"<b>{index+1}) <c>{value.title()}", enable_back_separator=True if index==0 else False, enable_front_separator=(False if not index == len(options)-1 else True),
+                    preset=preset.printer_preset, separator_preset=preset.separator_preset)
+        
+    # Print the errors if any
+    for i, error in enumerate(errors):
+        pretty_print(error, preset=preset.printer_preset, separator_preset=preset.separator_preset, enable_back_separator=True if i == 0 else False, enable_front_separator=True if i == len(errors)-1 else False)
+        
+    # Get user input
+    user_input = pretty_input("Enter a Option", preset=preset.input_preset).lower()
+    
+    # Add erros if any
+    if not user_input in options:
+        errors.append(f"<r>Option <g>'<y>{user_input}<g>'<r> is not valid!")
+    else:
+        pass
+    
